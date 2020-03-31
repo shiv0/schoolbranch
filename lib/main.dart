@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sk_school/screens/add_form.dart';
 import 'package:sk_school/screens/forget_pass.dart';
+import 'package:sk_school/screens/home_T_screen.dart';
+import 'package:sk_school/screens/home_screen_bh.dart';
 import 'package:sk_school/screens/sign_up.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
 import 'package:sk_school/screens/login_screen.dart';
@@ -25,6 +28,9 @@ class FlashChat extends StatelessWidget {
         ChatScreen.id: (context) => ChatScreen(),
         Sign_up.id: (context) => Sign_up(),
         Forget_pass.id: (context) => Forget_pass(),
+        Home_screen.id: (context) => Home_screen(),
+        HomeScreenBh.id: (context) => HomeScreenBh(),
+        AddForm.id: (context) => AddForm(),
       },
     );
   }

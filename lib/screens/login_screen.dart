@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:sk_school/screens/forget_pass.dart';
-import 'dart:convert';
-import 'chat_screen.dart';
+import 'package:sk_school/screens/home_T_screen.dart';
+import 'package:sk_school/constants.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sk_school/screens/home_screen_bh.dart';
 
 class LoginScreen extends StatefulWidget {
   static String id = 'login_screen';
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushNamed(context, Forget_pass.id);
                       },
                       child: Text(
-                        'Forget Password?',
+                        'Forgot Password?',
                         style: TextStyle(color: Colors.amber),
                       ),
                     )),
@@ -179,32 +179,33 @@ class _LoginScreenState extends State<LoginScreen> {
 //    }
 //  }
   void login() async {
-    dart_mongo.Db db =
-        dart_mongo.Db('mongodb://user:user123@3.6.175.16:27017/test');
+    await pr.show();
+
+    dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
     dart_mongo.DbCollection usersCollection =
         db.collection('testInsertWithObjectId');
-//    await usersCollection.insertAll([
-//      {'login': 'shivank', 'name': 'John Doe', 'email': 'john@doe.com'},
-//      {'login': 'lsmith', 'name': 'Lucy Smith', 'email': 'lucy@smith.com'}
-//    ]);
-//    print('database inserted');
-    await pr.show();
     List val = await usersCollection
         .find(dart_mongo.where.eq("email", email))
         .toList();
     if (val.length == 0) {
       print('huh$val');
+      await db.close();
       pr.hide().then((isHidden) {
         print(isHidden);
       });
       dialog_show('Invalid Login', 'Enter the correct username and password.');
     } else {
+      await db.close();
       pr.hide();
       String name = val[0]['password'];
       if (name == password) {
-        addStringToSF();
+        String category = val[0]['category'];
+        String email = val[0]['email'];
+        if (category == '1')
+          addStringToSF_T(email);
+        else if (category == '2') addStringToSF_BH(email);
       } else {
         dialog_show(
             'Invalid Login', 'Enter the correct username and password.');
@@ -249,9 +250,19 @@ class _LoginScreenState extends State<LoginScreen> {
         });
   }
 
-  addStringToSF() async {
+  addStringToSF_T(var email) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('loginsts', "1yes");
-    Navigator.popAndPushNamed(context, ChatScreen.id);
+    prefs.setString('Cat', "1");
+    prefs.setString('email', email);
+    Navigator.pushReplacementNamed(context, Home_screen.id);
+  }
+
+  addStringToSF_BH(var email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('loginsts', "1yes");
+    prefs.setString('Cat', "2");
+    prefs.setString('email', email);
+    Navigator.pushReplacementNamed(context, HomeScreenBh.id);
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:sk_school/screens/chat_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sk_school/constants.dart';
+import 'package:sk_school/screens/home_T_screen.dart';
+import 'package:sk_school/screens/home_screen_bh.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static String id = 'registration_screen';
@@ -12,14 +14,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String _value,
-      first_name,
-      last_name,
-      email_id,
-      mobile,
-      category,
-      pass,
-      cnfpass;
+  String first_name, last_name, email_id, mobile, category, pass, cnfpass;
   ProgressDialog pr;
 
   @override
@@ -44,7 +39,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               SizedBox(
-                height: 25.0,
+                height: 45.0,
               ),
               Row(
                 children: <Widget>[
@@ -356,8 +351,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void register() async {
     await pr.show();
-    dart_mongo.Db db =
-        dart_mongo.Db('mongodb://user:user123@3.6.175.16:27017/test');
+    dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
     dart_mongo.DbCollection usersCollection =
@@ -373,6 +367,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await usersCollection.insertAll([
           {
             'name': first_name,
+            'lname': last_name,
             'email': email_id,
             'mobile': mobile,
             'password': pass,
@@ -380,14 +375,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           },
         ]);
         print('database inserted');
+        await db.close();
         pr.hide().then((isHidden) {
           addStringToSF();
         });
       } else {
+        await db.close();
         pr.hide();
         dialog_show('Already User', 'Mobile already exist.Try login');
       }
     } else {
+      await db.close();
       pr.hide();
       dialog_show('Already User', 'Email already exist.Try login');
     }
@@ -396,6 +394,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   addStringToSF() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('loginsts', "1yes");
-    Navigator.pushReplacementNamed(context, ChatScreen.id);
+    prefs.setString('Cat', category);
+    if (category == '1')
+      Navigator.pushReplacementNamed(context, Home_screen.id);
+    else if (category == '2')
+      Navigator.pushReplacementNamed(context, HomeScreenBh.id);
   }
 }

@@ -71,7 +71,7 @@ class _Forget_passState extends State<Forget_pass> {
                           minWidth: 200.0,
                           height: 42.0,
                           child: Text(
-                            'Forget',
+                            'Forgot',
                           ),
                         ),
                       ),

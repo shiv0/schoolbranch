@@ -1,4 +1,5 @@
-import 'package:sk_school/screens/chat_screen.dart';
+import 'package:sk_school/screens/home_T_screen.dart';
+import 'package:sk_school/screens/home_screen_bh.dart';
 import 'package:sk_school/screens/login_screen.dart';
 import 'package:sk_school/screens/registration_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -64,7 +65,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                   child: MaterialButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, LoginScreen.id);
+                      Navigator.pushReplacementNamed(context, LoginScreen.id);
                     },
                     minWidth: 200.0,
                     height: 42.0,
@@ -116,6 +117,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     List val = await usersCollection
         .find(dart_mongo.where.eq("login", 'shivank'))
         .toList();
+    await db.close();
+
     if (val.length == 0)
       print('huh$val');
     else {
@@ -128,8 +131,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return String
     String stringValue = prefs.getString('loginsts');
+    String cat = prefs.getString('Cat');
     if (stringValue == '1yes') {
-      Navigator.pushReplacementNamed(context, ChatScreen.id);
+      if (cat == '1')
+        Navigator.pushReplacementNamed(context, Home_screen.id);
+      else if (cat == '2')
+        Navigator.pushReplacementNamed(context, HomeScreenBh.id);
     }
   }
 }

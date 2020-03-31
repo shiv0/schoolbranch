@@ -17,3 +17,5 @@ const kMessageContainerDecoration = BoxDecoration(
     top: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
   ),
 );
+
+const URL = 'mongodb://user:user123@3.6.175.16:27017/test';
