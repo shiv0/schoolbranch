@@ -139,7 +139,11 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
     dart_mongo.Db db = dart_mongo.Db(URL);
-    await db.open();
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {
+      dialog_show('Error', 'Some error in connecting database!');
+    }
     print('database connected');
     dart_mongo.DbCollection usersCollection = db.collection('Cards');
     List val = await usersCollection
@@ -147,5 +151,42 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
         .toList();
     print('huh$val');
     await db.close();
+  }
+
+  void dialog_show(String s, String t) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: new Text(
+              s,
+              style:
+                  TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+            ),
+            content: Container(
+              child: new Text(
+                t,
+                style: TextStyle(color: Colors.black87),
+              ),
+            ),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              Container(
+                padding: EdgeInsets.only(right: 5.0),
+                child: new FlatButton(
+                  child: new Text(
+                    "Close",
+                    style: TextStyle(color: Colors.amber),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          );
+        });
   }
 }

@@ -30,6 +30,7 @@ class _AddFormState extends State<AddForm> {
   String user_name, lname;
   DateTime selectedDate = DateTime.now();
   TextEditingController _controller;
+  bool _autoValidate = false;
 
   ProgressDialog pr;
 
@@ -64,6 +65,7 @@ class _AddFormState extends State<AddForm> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Form(
+                    autovalidate: _autoValidate,
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -281,6 +283,10 @@ class _AddFormState extends State<AddForm> {
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
                                 submit();
+                              } else {
+                                setState(() {
+                                  _autoValidate = true;
+                                });
                               }
 //                            Navigator.of(context).pop();
                             },

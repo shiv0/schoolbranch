@@ -573,7 +573,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void register() async {
     await pr.show();
     dart_mongo.Db db = dart_mongo.Db(URL);
-    await db.open();
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {
+      pr.hide().then((isHidden) {
+        dialog_show('Error', 'Some error in connecting database!');
+      });
+    }
     print('database connected');
     dart_mongo.DbCollection usersCollection =
         db.collection('testInsertWithObjectId');
