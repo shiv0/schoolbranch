@@ -25,21 +25,29 @@ class _AddFormState extends State<AddForm> {
       qualification,
       email,
       mobile;
+  final _formKey = GlobalKey<FormState>();
+
   String user_name, lname;
+  DateTime selectedDate = DateTime.now();
+  TextEditingController _controller;
+
   ProgressDialog pr;
 
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
+    _controller = new TextEditingController(
+        text: "${selectedDate.toLocal()}".split(' ')[0]);
+
     return MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.blue,
-          accentColor: Colors.green,
-          textTheme: TextTheme(body1: TextStyle(color: Colors.purple)),
-        ),
+//        theme: ThemeData(
+//          primaryColor: Colors.blue,
+//          accentColor: Colors.green,
+//          textTheme: TextTheme(body1: TextStyle(color: Colors.purple)),
+//        ),
         home: Scaffold(
-            backgroundColor: Colors.white70,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               leading: null,
               backgroundColor: Colors.amber,
@@ -55,426 +63,262 @@ class _AddFormState extends State<AddForm> {
               SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 25.0,
-                      ),
-                      Container(
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 25.0,
                         ),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          hint: Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Text("Select Subject",
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                )),
-                          ),
-                          items: [
-                            DropdownMenuItem<String>(
-                              value: "1",
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  "Physics",
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              ),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: "2",
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  "Chemistry",
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              ),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              subject = value;
-                            });
-                          },
+                        DropdownButtonFormField<String>(
+                          isDense: true,
+                          iconSize: 20.0,
                           value: subject,
-                          elevation: 2,
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                          isDense: true,
-                          iconSize: 40.0,
+                          decoration:
+                              InputDecoration(labelText: 'Select Subject'),
+                          onChanged: (salutation) =>
+                              setState(() => subject = salutation),
+                          validator: (value) =>
+                              value == null ? 'Please select' : null,
+                          items: ['MR.', 'MS.']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          duration = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Duration',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 2.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+                        SizedBox(
+                          height: 15.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          date = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Date',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 2.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          amount = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Amount',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Container(
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                        ),
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          hint: Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Text("Select Qualification",
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                )),
-                          ),
-                          items: [
-                            DropdownMenuItem<String>(
-                              value: "1",
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  "Graduate",
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              ),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: "2",
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 15.0),
-                                child: Text(
-                                  "Post Graduate",
-                                  style: TextStyle(color: Colors.black87),
-                                ),
-                              ),
-                            ),
-                          ],
+                        TextFormField(
+                          validator: (String value) {
+                            if (value != null && value.isEmpty) {
+                              // ignore: missing_return
+                              return 'Field Required';
+                            }
+                            return null;
+                          },
                           onChanged: (value) {
-                            setState(() {
-                              qualification = value;
-                            });
+                            duration =
+                                value; //Do something with the user input.
                           },
-                          value: qualification,
-                          elevation: 2,
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                          isDense: true,
-                          iconSize: 40.0,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(labelText: 'Duration'),
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          house = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'House No.',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            _selectDate(context);
+                          },
+                          child: IgnorePointer(
+                            child: TextFormField(
+                              controller: _controller,
+                              validator: (String value) {
+                                if (value != null && value.isEmpty) {
+                                  // ignore: missing_return
+                                  return 'Field Required';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                date =
+                                    value; //Do something with the user input.
+                              },
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(labelText: 'Date'),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          district = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'District',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+                        SizedBox(
+                          height: 15.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          state = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'State',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+                        TextFormField(
+                          validator: (String value) {
+                            if (value != null && value.isEmpty) {
+                              // ignore: missing_return
+                              return 'Field Required';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            amount = value; //Do something with the user input.
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(labelText: 'Amount'),
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          pincode = value; //Do something with the user input.
-                        },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Pin Code',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+                        SizedBox(
+                          height: 15.0,
                         ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      TextField(
-                        onChanged: (value) {
-                          description =
-                              value; //Do something with the user input.
-                        },
-                        maxLines: 5,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Description',
-                          hintStyle: TextStyle(color: Colors.black87),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
-                          border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black87, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.amber, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                          ),
+//                        DropdownButtonFormField<String>(
+//                          isDense: true,
+//                          iconSize: 20.0,
+//                          value: qualification,
+//                          decoration: InputDecoration(
+//                              labelText: 'Select Qualification'),
+//                          onChanged: (salutation) =>
+//                              setState(() => qualification = salutation),
+//                          validator: (value) =>
+//                              value == null ? 'Please select' : null,
+//                          items: ['Graduate', 'Post Graduate']
+//                              .map<DropdownMenuItem<String>>((String value) {
+//                            return DropdownMenuItem<String>(
+//                              value: value,
+//                              child: Text(value),
+//                            );
+//                          }).toList(),
+//                        ),
+//                        SizedBox(
+//                          height: 15.0,
+//                        ),
+//                        TextFormField(
+//                          validator: (String value) {
+//                            if (value != null && value.isEmpty) {
+//                              // ignore: missing_return
+//                              return 'Field Required';
+//                            }
+//                            return null;
+//                          },
+//                          onChanged: (value) {
+//                            house = value; //Do something with the user input.
+//                          },
+//                          keyboardType: TextInputType.text,
+//                          decoration: InputDecoration(labelText: 'House No.'),
+//                        ),
+//                        SizedBox(
+//                          height: 15.0,
+//                        ),
+//                        DropdownButtonFormField<String>(
+//                          isDense: true,
+//                          iconSize: 20.0,
+//                          value: district,
+//                          decoration:
+//                              InputDecoration(labelText: 'Select District'),
+//                          onChanged: (salutation) =>
+//                              setState(() => district = salutation),
+//                          validator: (value) =>
+//                              value == null ? 'Please select' : null,
+//                          items: ['Chinatown', 'Buona Vista']
+//                              .map<DropdownMenuItem<String>>((String value) {
+//                            return DropdownMenuItem<String>(
+//                              value: value,
+//                              child: Text(value),
+//                            );
+//                          }).toList(),
+//                        ),
+//                        SizedBox(
+//                          height: 15.0,
+//                        ),
+//                        DropdownButtonFormField<String>(
+//                          isDense: true,
+//                          iconSize: 20.0,
+//                          value: state,
+//                          decoration:
+//                              InputDecoration(labelText: 'Select State'),
+//                          onChanged: (salutation) =>
+//                              setState(() => state = salutation),
+//                          validator: (value) =>
+//                              value == null ? 'Please select' : null,
+//                          items: ['Central', 'East side']
+//                              .map<DropdownMenuItem<String>>((String value) {
+//                            return DropdownMenuItem<String>(
+//                              value: value,
+//                              child: Text(value),
+//                            );
+//                          }).toList(),
+//                        ),
+//                        SizedBox(
+//                          height: 15.0,
+//                        ),
+//                        TextFormField(
+//                          validator: (String value) {
+//                            if (value != null && value.isEmpty) {
+//                              // ignore: missing_return
+//                              return 'Field Required';
+//                            }
+//                            return null;
+//                          },
+//                          onChanged: (value) {
+//                            pincode = value; //Do something with the user input.
+//                          },
+//                          keyboardType: TextInputType.number,
+//                          decoration: InputDecoration(labelText: 'Pin Code'),
+//                        ),
+//                        SizedBox(
+//                          height: 15.0,
+//                        ),
+                        TextFormField(
+                          validator: (String value) {
+                            if (value != null && value.isEmpty) {
+                              // ignore: missing_return
+                              return 'Field Required';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            description =
+                                value; //Do something with the user input.
+                          },
+                          maxLines: 2,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(labelText: 'Description'),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: RaisedButton(
-                          color: Colors.amber,
-                          child: Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          onPressed: () {
-                            validate();
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: RaisedButton(
+                            color: Colors.amber,
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState.validate()) {
+                                submit();
+                              }
 //                            Navigator.of(context).pop();
-                          },
-                        ),
-                      )
-                    ],
+                            },
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             ])));
   }
 
-  void validate() {
-    if (subject == null ||
-        duration == null ||
-        date == null ||
-        amount == null ||
-        qualification == null ||
-        house == null ||
-        district == null ||
-        state == null ||
-        pincode == null ||
-        description == null)
-      dialog_show('Incomplete Input', 'Please fill the complete details.');
-    else
-      submit();
+//  void validate() {
+//    if (subject == null ||
+//        duration == null ||
+//        date == null ||
+//        amount == null ||
+//        qualification == null ||
+//        house == null ||
+//        district == null ||
+//        state == null ||
+//        pincode == null ||
+//        description == null)
+//      dialog_show('Incomplete Input', 'Please fill the complete details.');
+//    else
+//      submit();
+//  }
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
   }
 
   dart_mongo.Db db;
@@ -496,11 +340,11 @@ class _AddFormState extends State<AddForm> {
         'duration': duration,
         'date': date,
         'amount': amount,
-        'qualification': qualification,
-        'house': house,
-        'district': district,
-        'state': state,
-        'pincode': pincode,
+//        'qualification': qualification,
+//        'house': house,
+//        'district': district,
+//        'state': state,
+//        'pincode': pincode,
         'description': description,
       },
     ]);

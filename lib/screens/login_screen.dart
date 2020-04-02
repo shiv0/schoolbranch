@@ -255,7 +255,8 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString('loginsts', "1yes");
     prefs.setString('Cat', "1");
     prefs.setString('email', email);
-    Navigator.pushReplacementNamed(context, Home_screen.id);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        Home_screen.id, (Route<dynamic> route) => false);
   }
 
   addStringToSF_BH(var email) async {
@@ -263,6 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString('loginsts', "1yes");
     prefs.setString('Cat', "2");
     prefs.setString('email', email);
-    Navigator.pushReplacementNamed(context, HomeScreenBh.id);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        HomeScreenBh.id, (Route<dynamic> route) => false);
   }
 }

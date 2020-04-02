@@ -14,7 +14,18 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String first_name, last_name, email_id, mobile, category, pass, cnfpass;
+  String first_name,
+      last_name,
+      email_id,
+      mobile,
+      category,
+      pass,
+      cnfpass,
+      address,
+      district,
+      state,
+      pin,
+      qualification;
   ProgressDialog pr;
 
   @override
@@ -212,6 +223,211 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               SizedBox(
                 height: 15.0,
               ),
+              Container(
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                ),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Select Qualification",
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: "1",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "Graduate",
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: "2",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "Post Graduate",
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      qualification = value;
+                    });
+                  },
+                  value: qualification,
+                  elevation: 2,
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  isDense: true,
+                  iconSize: 40.0,
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              TextField(
+                onChanged: (value) {
+                  address = value; //Do something with the user input.
+                },
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  hintText: 'Address',
+                  hintStyle: TextStyle(color: Colors.white),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                ),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Select District",
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: "1",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "District 1",
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: "2",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "District 2",
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      district = value;
+                    });
+                  },
+                  value: district,
+                  elevation: 2,
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  isDense: true,
+                  iconSize: 40.0,
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                ),
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text("Select State",
+                        style: TextStyle(
+                          color: Colors.white,
+                        )),
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: "1",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "State 1",
+                        ),
+                      ),
+                    ),
+                    DropdownMenuItem<String>(
+                      value: "2",
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: Text(
+                          "State 2",
+                        ),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      state = value;
+                    });
+                  },
+                  value: state,
+                  elevation: 2,
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  isDense: true,
+                  iconSize: 40.0,
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              TextField(
+                onChanged: (value) {
+                  pin = value; //Do something with the user input.
+                },
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Pin Code',
+                  hintStyle: TextStyle(color: Colors.white),
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(32.0)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
               TextField(
                 onChanged: (value) {
                   pass = value; //Do something with the user input.
@@ -299,6 +515,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         mobile == null ||
         category == null ||
         pass == null ||
+        qualification == null ||
+        address == null ||
+        district == null ||
+        state == null ||
+        pin == null ||
         cnfpass == null)
       dialog_show('Incomplete Input', 'Please fill the complete details.');
     else if (email_id.contains('@') &&
@@ -371,6 +592,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             'email': email_id,
             'mobile': mobile,
             'password': pass,
+            'qualification': qualification,
+            'address': address,
+            'district': district,
+            'state': state,
+            'pin': pin,
             'category': category
           },
         ]);
@@ -395,6 +621,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('loginsts', "1yes");
     prefs.setString('Cat', category);
+    prefs.setString('email', email_id);
     if (category == '1')
       Navigator.pushReplacementNamed(context, Home_screen.id);
     else if (category == '2')
