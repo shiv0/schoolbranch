@@ -344,7 +344,7 @@ class _AddFormState extends State<AddForm> {
         'name': user_name,
         'subject': subject,
         'duration': duration,
-        'date': date,
+        'date': "${selectedDate.toLocal()}".split(' ')[0],
         'amount': amount,
 //        'qualification': qualification,
 //        'house': house,

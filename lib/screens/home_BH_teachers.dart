@@ -51,12 +51,15 @@ class _HomeBhTeachersState extends State<HomeBhTeachers> {
     List<Choice> list = [];
     for (int i = val.length - 1; i >= 0; i--) {
       String duration = val[i]['duration'];
-      String date = val[i]['date'];
+      String date = val[i]['date'].toString();
       String amount = val[i]['amount'];
       String name = val[i]['name'];
       String lname = val[i]['lname'];
       if (name == null) {
         name = 'check';
+      }
+      if (date == null) {
+        date = '20-12-02';
       }
       Choice choices =
           Choice(duration: duration, date: date, amount: amount, name: name);

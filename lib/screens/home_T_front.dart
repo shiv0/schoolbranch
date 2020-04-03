@@ -78,8 +78,11 @@ class _HomeTFrontState extends State<HomeTFront> {
     List<Choice> list = [];
     for (int i = val.length - 1; i >= 0; i--) {
       String duration = val[i]['duration'];
-      String date = val[i]['date'];
+      String date = val[i]['date'].toString();
       String amount = val[i]['amount'];
+      if (date == null) {
+        date = '20-12-02';
+      }
       Choice choices = Choice(duration: duration, date: date, amount: amount);
       list.add(choices);
     }
