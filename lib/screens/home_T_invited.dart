@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sk_school/constants.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
 
 class HomeTInvited extends StatefulWidget {
@@ -11,7 +12,7 @@ class _HomeTInvitedState extends State<HomeTInvited> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white70,
+      backgroundColor: bckcolor,
       body: Column(
         children: <Widget>[
           SizedBox(
@@ -22,7 +23,7 @@ class _HomeTInvitedState extends State<HomeTInvited> {
               'More',
               style: TextStyle(
                   fontSize: 30.0,
-                  color: Colors.white,
+                  color: Colors.orange,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -31,11 +32,12 @@ class _HomeTInvitedState extends State<HomeTInvited> {
           ),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.transit_enterexit,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Received',
@@ -47,11 +49,12 @@ class _HomeTInvitedState extends State<HomeTInvited> {
               )),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.queue,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Accepted',
@@ -63,11 +66,12 @@ class _HomeTInvitedState extends State<HomeTInvited> {
               )),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.close,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Rejected',

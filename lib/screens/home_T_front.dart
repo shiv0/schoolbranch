@@ -5,6 +5,7 @@ import 'package:sk_school/screens/add_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:sk_school/screens/card_details_T.dart';
 
 class HomeTFront extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class _HomeTFrontState extends State<HomeTFront> {
   List<Choice> card_list = [];
   String email, password;
   ProgressDialog pr;
+  bool display = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,42 +24,67 @@ class _HomeTFrontState extends State<HomeTFront> {
     pr.style(message: 'Please Wait..');
     getUserCards();
     return Scaffold(
-      backgroundColor: Colors.white70,
-      body: ListView(
-        children: <Widget>[
-          Container(
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, AddForm.id);
-                    },
-                    child: Icon(
-                      Icons.add_circle,
-                      color: Colors.white,
-                      size: 50,
-                    ),
+      backgroundColor: bckcolor,
+      body: display
+          ? ListView(
+              children: <Widget>[
+                Container(
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, AddForm.id);
+                          },
+                          child: Icon(
+                            Icons.add_circle,
+                            color: Colors.orange,
+                            size: 50,
+                          ),
+                        ),
+                      ),
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
                   ),
                 ),
+                Container(
+                  child: ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: List.generate(card_list.length, (index) {
+                        return GestureDetector(
+                          onTap: () {
+//                      Scaffold.of(context).showSnackBar(SnackBar(
+//                        content: Text('$index'),
+//                        duration: Duration(seconds: 2),
+//                      ));
+                            Navigator.pushNamed(context, Card_Details_T.id,
+                                arguments: {
+                                  'date': card_list[index].date,
+                                  'duration': card_list[index].duration,
+                                  'amount': card_list[index].amount,
+                                  'description': card_list[index].description,
+                                  'subject': card_list[index].subject
+                                });
+                          },
+                          child: CardItem(
+                            choice: card_list[index],
+                            item: card_list[index],
+                          ),
+                        );
+                      })),
+                ),
+                SizedBox(
+                  height: 35,
+                ),
               ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          ),
-          Container(
-            child: ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: List.generate(card_list.length, (index) {
-                  return CardItem(
-                    choice: card_list[index],
-                    item: card_list[index],
-                  );
-                })),
-          )
-        ],
-      ),
+            )
+          : Container(
+              child: Center(
+                  child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+            ))),
     );
   }
 
@@ -80,14 +107,27 @@ class _HomeTFrontState extends State<HomeTFront> {
       String duration = val[i]['duration'];
       String date = val[i]['date'].toString();
       String amount = val[i]['amount'];
+      String description = val[i]['description'];
+      String subject = val[i]['subject'];
+      String posted_date = val[i]['posted_date'];
       if (date == null) {
         date = '20-12-02';
       }
-      Choice choices = Choice(duration: duration, date: date, amount: amount);
+      if (posted_date == null) {
+        posted_date = '-';
+      }
+      Choice choices = Choice(
+          duration: duration,
+          date: date,
+          amount: amount,
+          description: description,
+          subject: subject,
+          posted_date: posted_date);
       list.add(choices);
     }
     setState(() {
       card_list = list;
+      display = true;
     });
     await db.close();
     pr.hide().then((isHidden) {
@@ -100,8 +140,17 @@ class Choice {
   final String duration;
   final String date;
   final String amount;
+  final String description;
+  final String subject;
+  final String posted_date;
 
-  const Choice({this.duration, this.date, this.amount});
+  const Choice(
+      {this.duration,
+      this.date,
+      this.amount,
+      this.description,
+      this.subject,
+      this.posted_date});
 }
 
 class CardItem extends StatelessWidget {
@@ -127,7 +176,7 @@ class CardItem extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0),
       child: Card(
           margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-          elevation: 10,
+          elevation: 8,
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -138,7 +187,7 @@ class CardItem extends StatelessWidget {
                     children: <Widget>[
                       Icon(
                         Icons.alarm,
-                        color: Colors.black87,
+                        color: Colors.blue,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -147,7 +196,7 @@ class CardItem extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.black87,
                               fontFamily: 'SourceSansPro',
-                              fontSize: 20.0,
+                              fontSize: 25.0,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -160,12 +209,33 @@ class CardItem extends StatelessWidget {
                     children: <Widget>[
                       Icon(
                         Icons.insert_invitation,
-                        color: Colors.black87,
+                        color: Colors.green,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           choice.date,
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontFamily: 'SourceSansPro',
+                              fontSize: 16.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.topLeft,
+                ),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.attach_money,
+                        color: Colors.deepOrangeAccent,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          choice.amount,
                           style: TextStyle(
                               color: Colors.black87,
                               fontFamily: 'SourceSansPro',
@@ -180,18 +250,15 @@ class CardItem extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      Text(
-                        '\$',
-                        style: TextStyle(color: Colors.black87),
-                      ),
                       Padding(
                         padding: const EdgeInsets.only(right: 4.0),
                         child: Text(
-                          choice.amount,
+                          choice.posted_date,
                           style: TextStyle(
-                              color: Colors.black87,
+                              color: Colors.grey,
                               fontFamily: 'SourceSansPro',
-                              fontSize: 15.0),
+                              fontSize: 15.0,
+                              fontStyle: FontStyle.italic),
                         ),
                       ),
                     ],

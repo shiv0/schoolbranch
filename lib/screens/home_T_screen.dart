@@ -73,6 +73,7 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.black45,
         onTap: OnTabTapped,
         items: [
           BottomNavigationBarItem(

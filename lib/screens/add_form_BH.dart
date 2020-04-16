@@ -1,20 +1,20 @@
-import 'dart:math';
-
-import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:sk_school/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class AddForm extends StatefulWidget {
-  static String id = 'add_form';
+class Add_Form_BH extends StatefulWidget {
+  static String id = 'add_form_bh';
   @override
-  _AddFormState createState() => _AddFormState();
+  _Add_Form_BHState createState() => _Add_Form_BHState();
 }
 
-class _AddFormState extends State<AddForm> {
+class _Add_Form_BHState extends State<Add_Form_BH> {
   String duration,
-      date,
+      start_date,
+      end_date,
+      posted_date,
       amount,
       house,
       district,
@@ -22,33 +22,30 @@ class _AddFormState extends State<AddForm> {
       pincode,
       description,
       subject,
+      gender,
       qualification,
       email,
-      posted_date,
       mobile;
   final _formKey = GlobalKey<FormState>();
 
   String user_name, lname;
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate1 = DateTime.now();
+  DateTime selectedDate2 = DateTime.now();
   DateTime now_date = DateTime.now();
-  TextEditingController _controller;
+  TextEditingController _controller, _controller2;
   bool _autoValidate = false;
 
   ProgressDialog pr;
-
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
+    posted_date = "${now_date.toLocal()}".split(' ')[0];
     _controller = new TextEditingController(
-        text: "${selectedDate.toLocal()}".split(' ')[0]);
-    posted_date = "${selectedDate.toLocal()}".split(' ')[0];
+        text: "${selectedDate1.toLocal()}".split(' ')[0]);
+    _controller2 = new TextEditingController(
+        text: "${selectedDate2.toLocal()}".split(' ')[0]);
     return MaterialApp(
-//        theme: ThemeData(
-//          primaryColor: Colors.blue,
-//          accentColor: Colors.green,
-//          textTheme: TextTheme(body1: TextStyle(color: Colors.purple)),
-//        ),
         home: Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -95,6 +92,27 @@ class _AddFormState extends State<AddForm> {
                           }).toList(),
                         ),
                         SizedBox(
+                          height: 25.0,
+                        ),
+                        DropdownButtonFormField<String>(
+                          isDense: true,
+                          iconSize: 20.0,
+                          value: gender,
+                          decoration:
+                              InputDecoration(labelText: 'Select Gender'),
+                          onChanged: (salutation) =>
+                              setState(() => gender = salutation),
+                          validator: (value) =>
+                              value == null ? 'Please select' : null,
+                          items: ['Male', 'Female']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(
                           height: 15.0,
                         ),
                         TextFormField(
@@ -130,11 +148,39 @@ class _AddFormState extends State<AddForm> {
                                 return null;
                               },
                               onChanged: (value) {
-                                date =
+                                start_date =
                                     value; //Do something with the user input.
                               },
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(labelText: 'Date'),
+                              decoration:
+                                  InputDecoration(labelText: 'Start Date'),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            _selectDate2(context);
+                          },
+                          child: IgnorePointer(
+                            child: TextFormField(
+                              controller: _controller2,
+                              validator: (String value) {
+                                if (value != null && value.isEmpty) {
+                                  // ignore: missing_return
+                                  return 'Field Required';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                end_date =
+                                    value; //Do something with the user input.
+                              },
+                              keyboardType: TextInputType.text,
+                              decoration:
+                                  InputDecoration(labelText: 'End Date'),
                             ),
                           ),
                         ),
@@ -158,103 +204,6 @@ class _AddFormState extends State<AddForm> {
                         SizedBox(
                           height: 15.0,
                         ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: qualification,
-//                          decoration: InputDecoration(
-//                              labelText: 'Select Qualification'),
-//                          onChanged: (salutation) =>
-//                              setState(() => qualification = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Graduate', 'Post Graduate']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        TextFormField(
-//                          validator: (String value) {
-//                            if (value != null && value.isEmpty) {
-//                              // ignore: missing_return
-//                              return 'Field Required';
-//                            }
-//                            return null;
-//                          },
-//                          onChanged: (value) {
-//                            house = value; //Do something with the user input.
-//                          },
-//                          keyboardType: TextInputType.text,
-//                          decoration: InputDecoration(labelText: 'House No.'),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: district,
-//                          decoration:
-//                              InputDecoration(labelText: 'Select District'),
-//                          onChanged: (salutation) =>
-//                              setState(() => district = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Chinatown', 'Buona Vista']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: state,
-//                          decoration:
-//                              InputDecoration(labelText: 'Select State'),
-//                          onChanged: (salutation) =>
-//                              setState(() => state = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Central', 'East side']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        TextFormField(
-//                          validator: (String value) {
-//                            if (value != null && value.isEmpty) {
-//                              // ignore: missing_return
-//                              return 'Field Required';
-//                            }
-//                            return null;
-//                          },
-//                          onChanged: (value) {
-//                            pincode = value; //Do something with the user input.
-//                          },
-//                          keyboardType: TextInputType.number,
-//                          decoration: InputDecoration(labelText: 'Pin Code'),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
                         TextFormField(
                           validator: (String value) {
                             if (value != null && value.isEmpty) {
@@ -302,30 +251,27 @@ class _AddFormState extends State<AddForm> {
             ])));
   }
 
-//  void validate() {
-//    if (subject == null ||
-//        duration == null ||
-//        date == null ||
-//        amount == null ||
-//        qualification == null ||
-//        house == null ||
-//        district == null ||
-//        state == null ||
-//        pincode == null ||
-//        description == null)
-//      dialog_show('Incomplete Input', 'Please fill the complete details.');
-//    else
-//      submit();
-//  }
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: selectedDate1,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate1)
       setState(() {
-        selectedDate = picked;
+        selectedDate1 = picked;
+      });
+  }
+
+  Future<Null> _selectDate2(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate2,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate2)
+      setState(() {
+        selectedDate2 = picked;
       });
   }
 
@@ -339,17 +285,18 @@ class _AddFormState extends State<AddForm> {
     await db.open();
     print('database connected');
     await getuserdata();
-    dart_mongo.DbCollection usersCollection = db.collection('Cards');
+    dart_mongo.DbCollection usersCollection = db.collection('BHCards');
     await usersCollection.insertAll([
       {
         'email': email,
         'name': user_name,
         'subject': subject,
+        'gender': gender,
         'duration': duration,
-        'date': "${selectedDate.toLocal()}".split(' ')[0],
+        'start_date': "${selectedDate1.toLocal()}".split(' ')[0],
+        'end_date': "${selectedDate2.toLocal()}".split(' ')[0],
         'amount': amount,
         'description': description,
-        'state': state,
         'posted_date': posted_date,
       },
     ]);
@@ -371,12 +318,8 @@ class _AddFormState extends State<AddForm> {
       user_name = val[0]['name'];
       lname = val[0]['lname'];
       mobile = val[0]['mobile'];
-      state = val[0]['state'];
       if (lname == null) {
         lname = 'S';
-      }
-      if (state == null) {
-        state = '-';
       }
       user_name = '$user_name $lname';
     }

@@ -1,3 +1,4 @@
+import 'package:sk_school/constants.dart';
 import 'package:sk_school/screens/home_T_screen.dart';
 import 'package:sk_school/screens/home_screen_bh.dart';
 import 'package:sk_school/screens/login_screen.dart';
@@ -103,28 +104,36 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   void getdatabase() async {
-    dart_mongo.Db db =
-        dart_mongo.Db('mongodb://user:user123@3.6.175.16:27017/test');
-    await db.open();
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {}
     print('database connected');
-    dart_mongo.DbCollection usersCollection =
-        db.collection('testInsertWithObjectId');
-//    await usersCollection.insertAll([
-//      {'login': 'shivank', 'name': 'John Doe', 'email': 'john@doe.com'},
-//      {'login': 'lsmith', 'name': 'Lucy Smith', 'email': 'lucy@smith.com'}
-//    ]);
-//    print('database inserted');
-    List val = await usersCollection
-        .find(dart_mongo.where.eq("login", 'shivank'))
-        .toList();
-    await db.close();
-
-    if (val.length == 0)
-      print('huh$val');
-    else {
-      String name = val[0]['name'];
-      print('good$name');
-    }
+    dart_mongo.DbCollection usersCollection = db.collection(user_coll);
+//    List val = await usersCollection
+//        .find(dart_mongo.where.eq("email", email_id))
+//        .toList();
+//    if (val.length == 0) {
+//      List val2 = await usersCollection
+//          .find(dart_mongo.where.eq("mobile", mobile))
+//          .toList();
+//      if (val2.length == 0) {
+    await usersCollection.insertAll([
+      {
+        'name': 'dani',
+        'lname': 'hasa',
+        'email': 'dani@gmail.com',
+        'mobile': '9628886804',
+        'password': 'hello',
+        'qualification': 'Graduate',
+        'address': 'address',
+        'district': 'district',
+        'state': 'state',
+        'pin': '1234565',
+        'category': '2'
+      },
+    ]);
+    print('database inserted');
   }
 
   getStringValuesSF() async {

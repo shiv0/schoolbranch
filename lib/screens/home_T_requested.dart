@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sk_school/constants.dart';
 
 class HomeTRequested extends StatefulWidget {
   @override
@@ -8,6 +9,6 @@ class HomeTRequested extends StatefulWidget {
 class _HomeTRequestedState extends State<HomeTRequested> {
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.white70);
+    return Container(color: bckcolor);
   }
 }

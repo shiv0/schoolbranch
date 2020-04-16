@@ -7,6 +7,7 @@ import 'package:sk_school/screens/home_T_invited.dart';
 import 'package:sk_school/screens/home_T_requested.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'welcome_screen.dart';
+import 'home_BH_more.dart';
 
 class HomeScreenBh extends StatefulWidget {
   static String id = 'Home_screen_bh';
@@ -20,7 +21,7 @@ class _HomeScreenBhState extends State<HomeScreenBh> {
     HomeBhFront(),
     HomeBhTeachers(),
     HomeTRequested(),
-    HomeTInvited()
+    Home_BH_More()
   ];
   @override
   Widget build(BuildContext context) {
@@ -57,6 +58,7 @@ class _HomeScreenBhState extends State<HomeScreenBh> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.black45,
         onTap: OnTabTapped,
         items: [
           BottomNavigationBarItem(

@@ -1,48 +1,66 @@
-import 'dart:math';
-
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/constants.dart';
 
-class AddForm extends StatefulWidget {
-  static String id = 'add_form';
+class Edit_Card_T extends StatefulWidget {
+  static String id = 'Edit_card_T';
   @override
-  _AddFormState createState() => _AddFormState();
+  _Edit_Card_TState createState() => _Edit_Card_TState();
 }
 
-class _AddFormState extends State<AddForm> {
+class _Edit_Card_TState extends State<Edit_Card_T> {
   String duration,
+      pduration = "",
       date,
+      pdate = "",
       amount,
+      pamount = "",
       house,
       district,
       state,
       pincode,
       description,
+      pdescription = "",
       subject,
+      psubject = "",
+      posted_date = "",
       qualification,
       email,
-      posted_date,
       mobile;
+  bool isdatechanged = false;
+  var changed_date;
   final _formKey = GlobalKey<FormState>();
+  ProgressDialog pr;
 
   String user_name, lname;
   DateTime selectedDate = DateTime.now();
   DateTime now_date = DateTime.now();
   TextEditingController _controller;
   bool _autoValidate = false;
-
-  ProgressDialog pr;
-
+  bool editbool = false;
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
-    _controller = new TextEditingController(
-        text: "${selectedDate.toLocal()}".split(' ')[0]);
+
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    if (arguments != null) {
+      pdate = arguments['date'];
+      pduration = arguments['duration'];
+      pamount = arguments['amount'];
+      pdescription = arguments['description'];
+      psubject = arguments['subject'];
+    }
+    if (subject == null) subject = psubject;
+    date = pdate;
     posted_date = "${selectedDate.toLocal()}".split(' ')[0];
+    duration = pduration;
+    amount = pamount;
+    description = pdescription;
+    _controller =
+        new TextEditingController(text: isdatechanged ? changed_date : pdate);
     return MaterialApp(
 //        theme: ThemeData(
 //          primaryColor: Colors.blue,
@@ -57,7 +75,7 @@ class _AddFormState extends State<AddForm> {
               title: Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Add',
+                  'Edit Details',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -76,28 +94,41 @@ class _AddFormState extends State<AddForm> {
                         SizedBox(
                           height: 25.0,
                         ),
-                        DropdownButtonFormField<String>(
-                          isDense: true,
-                          iconSize: 20.0,
-                          value: subject,
-                          decoration:
-                              InputDecoration(labelText: 'Select Subject'),
-                          onChanged: (salutation) =>
-                              setState(() => subject = salutation),
-                          validator: (value) =>
-                              value == null ? 'Please select' : null,
-                          items: ['Physics.', 'Chemistry.']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        Text(
+                          'Subject',
+                          style:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
+                        ),
+                        Visibility(
+                          visible: true,
+                          child: DropdownButtonFormField<String>(
+                            isDense: true,
+                            iconSize: 20.0,
+                            value: subject,
+                            decoration: InputDecoration(),
+                            onChanged: (salutation) =>
+                                setState(() => subject = salutation),
+                            validator: (value) =>
+                                value == null ? 'Please select' : null,
+                            items: ['Physics.', 'Chemistry.']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
                         ),
                         SizedBox(
-                          height: 15.0,
+                          height: 20.0,
+                        ),
+                        Text(
+                          'Duration',
+                          style:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
                         ),
                         TextFormField(
+                          initialValue: pduration,
                           validator: (String value) {
                             if (value != null && value.isEmpty) {
                               // ignore: missing_return
@@ -110,10 +141,16 @@ class _AddFormState extends State<AddForm> {
                                 value; //Do something with the user input.
                           },
                           keyboardType: TextInputType.text,
-                          decoration: InputDecoration(labelText: 'Duration'),
+                          decoration: InputDecoration(
+                              labelStyle: TextStyle(color: Colors.black87)),
                         ),
                         SizedBox(
-                          height: 15.0,
+                          height: 20.0,
+                        ),
+                        Text(
+                          'Date',
+                          style:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
                         ),
                         InkWell(
                           onTap: () {
@@ -134,14 +171,20 @@ class _AddFormState extends State<AddForm> {
                                     value; //Do something with the user input.
                               },
                               keyboardType: TextInputType.text,
-                              decoration: InputDecoration(labelText: 'Date'),
+                              decoration: InputDecoration(),
                             ),
                           ),
                         ),
                         SizedBox(
-                          height: 15.0,
+                          height: 20.0,
+                        ),
+                        Text(
+                          'Amount',
+                          style:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
                         ),
                         TextFormField(
+                          initialValue: pamount,
                           validator: (String value) {
                             if (value != null && value.isEmpty) {
                               // ignore: missing_return
@@ -153,109 +196,18 @@ class _AddFormState extends State<AddForm> {
                             amount = value; //Do something with the user input.
                           },
                           keyboardType: TextInputType.number,
-                          decoration: InputDecoration(labelText: 'Amount'),
+                          decoration: InputDecoration(),
                         ),
                         SizedBox(
-                          height: 15.0,
+                          height: 20.0,
                         ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: qualification,
-//                          decoration: InputDecoration(
-//                              labelText: 'Select Qualification'),
-//                          onChanged: (salutation) =>
-//                              setState(() => qualification = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Graduate', 'Post Graduate']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        TextFormField(
-//                          validator: (String value) {
-//                            if (value != null && value.isEmpty) {
-//                              // ignore: missing_return
-//                              return 'Field Required';
-//                            }
-//                            return null;
-//                          },
-//                          onChanged: (value) {
-//                            house = value; //Do something with the user input.
-//                          },
-//                          keyboardType: TextInputType.text,
-//                          decoration: InputDecoration(labelText: 'House No.'),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: district,
-//                          decoration:
-//                              InputDecoration(labelText: 'Select District'),
-//                          onChanged: (salutation) =>
-//                              setState(() => district = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Chinatown', 'Buona Vista']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        DropdownButtonFormField<String>(
-//                          isDense: true,
-//                          iconSize: 20.0,
-//                          value: state,
-//                          decoration:
-//                              InputDecoration(labelText: 'Select State'),
-//                          onChanged: (salutation) =>
-//                              setState(() => state = salutation),
-//                          validator: (value) =>
-//                              value == null ? 'Please select' : null,
-//                          items: ['Central', 'East side']
-//                              .map<DropdownMenuItem<String>>((String value) {
-//                            return DropdownMenuItem<String>(
-//                              value: value,
-//                              child: Text(value),
-//                            );
-//                          }).toList(),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
-//                        TextFormField(
-//                          validator: (String value) {
-//                            if (value != null && value.isEmpty) {
-//                              // ignore: missing_return
-//                              return 'Field Required';
-//                            }
-//                            return null;
-//                          },
-//                          onChanged: (value) {
-//                            pincode = value; //Do something with the user input.
-//                          },
-//                          keyboardType: TextInputType.number,
-//                          decoration: InputDecoration(labelText: 'Pin Code'),
-//                        ),
-//                        SizedBox(
-//                          height: 15.0,
-//                        ),
+                        Text(
+                          'Description',
+                          style:
+                              TextStyle(fontSize: 15.0, color: Colors.black87),
+                        ),
                         TextFormField(
+                          initialValue: pdescription,
                           validator: (String value) {
                             if (value != null && value.isEmpty) {
                               // ignore: missing_return
@@ -269,31 +221,81 @@ class _AddFormState extends State<AddForm> {
                           },
                           maxLines: 2,
                           keyboardType: TextInputType.text,
-                          decoration: InputDecoration(labelText: 'Description'),
+                          decoration: InputDecoration(),
                         ),
                         SizedBox(
                           height: 20.0,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: RaisedButton(
-                            color: Colors.amber,
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                                submit();
-                              } else {
-                                setState(() {
-                                  _autoValidate = true;
-                                });
-                              }
-//                            Navigator.of(context).pop();
-                            },
-                          ),
-                        )
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: RaisedButton(
+                                  color: Colors.grey,
+                                  child: Row(
+                                    children: <Widget>[
+//                                      Padding(
+//                                        padding: const EdgeInsets.only(
+//                                            right: 8.0,
+//                                            left: 0.0,
+//                                            top: 8.0,
+//                                            bottom: 8.0),
+//                                        child: Icon(
+//                                          Icons.edit,
+//                                          color: Colors.white,
+//                                        ),
+//                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Cancel",
+                                          style:
+                                              TextStyle(color: Colors.black87),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: RaisedButton(
+                                  color: Colors.amber,
+                                  child: Row(
+                                    children: <Widget>[
+//                                      Padding(
+//                                        padding: const EdgeInsets.only(
+//                                            right: 8.0,
+//                                            left: 0.0,
+//                                            top: 8.0,
+//                                            bottom: 8.0),
+//                                        child: Icon(
+//                                          Icons.close,
+//                                          color: Colors.white,
+//                                        ),
+//                                      ),
+                                      Text(
+                                        "Submit",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    if (_formKey.currentState.validate()) {
+                                      submit();
+                                    } else {
+                                      setState(() {
+                                        _autoValidate = true;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                            ])
                       ],
                     ),
                   ),
@@ -302,21 +304,6 @@ class _AddFormState extends State<AddForm> {
             ])));
   }
 
-//  void validate() {
-//    if (subject == null ||
-//        duration == null ||
-//        date == null ||
-//        amount == null ||
-//        qualification == null ||
-//        house == null ||
-//        district == null ||
-//        state == null ||
-//        pincode == null ||
-//        description == null)
-//      dialog_show('Incomplete Input', 'Please fill the complete details.');
-//    else
-//      submit();
-//  }
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -326,6 +313,8 @@ class _AddFormState extends State<AddForm> {
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
+        changed_date = "${selectedDate.toLocal()}".split(' ')[0];
+        isdatechanged = true;
       });
   }
 
@@ -340,7 +329,11 @@ class _AddFormState extends State<AddForm> {
     print('database connected');
     await getuserdata();
     dart_mongo.DbCollection usersCollection = db.collection('Cards');
-    await usersCollection.insertAll([
+    await usersCollection.update(
+      await usersCollection.findOne(dart_mongo.where
+          .eq("email", email)
+          .and(dart_mongo.where.eq("date", pdate))
+          .and(dart_mongo.where.eq("duration", pduration))),
       {
         'email': email,
         'name': user_name,
@@ -348,11 +341,10 @@ class _AddFormState extends State<AddForm> {
         'duration': duration,
         'date': "${selectedDate.toLocal()}".split(' ')[0],
         'amount': amount,
-        'description': description,
-        'state': state,
         'posted_date': posted_date,
+        'description': description,
       },
-    ]);
+    );
     print('database inserted');
     await db.close();
     pr.hide().then((isHidden) {
@@ -371,12 +363,8 @@ class _AddFormState extends State<AddForm> {
       user_name = val[0]['name'];
       lname = val[0]['lname'];
       mobile = val[0]['mobile'];
-      state = val[0]['state'];
       if (lname == null) {
         lname = 'S';
-      }
-      if (state == null) {
-        state = '-';
       }
       user_name = '$user_name $lname';
     }

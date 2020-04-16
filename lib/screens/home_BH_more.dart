@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/constants.dart';
+import 'package:sk_school/screens/Edit_BH_profile.dart';
+import 'package:sk_school/screens/home_BH_profile.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
 
-class HomeBhInvited extends StatefulWidget {
+class Home_BH_More extends StatefulWidget {
   @override
-  _HomeBhInvitedState createState() => _HomeBhInvitedState();
+  _Home_BH_MoreState createState() => _Home_BH_MoreState();
 }
 
-class _HomeBhInvitedState extends State<HomeBhInvited> {
+class _Home_BH_MoreState extends State<Home_BH_More> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +25,7 @@ class _HomeBhInvitedState extends State<HomeBhInvited> {
               'More',
               style: TextStyle(
                   fontSize: 30.0,
-                  color: Colors.white,
+                  color: Colors.orange,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -32,11 +34,12 @@ class _HomeBhInvitedState extends State<HomeBhInvited> {
           ),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.transit_enterexit,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Received',
@@ -48,11 +51,12 @@ class _HomeBhInvitedState extends State<HomeBhInvited> {
               )),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.queue,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Accepted',
@@ -64,11 +68,12 @@ class _HomeBhInvitedState extends State<HomeBhInvited> {
               )),
           Card(
               color: Colors.white,
+              elevation: 8,
               margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
               child: ListTile(
                 leading: Icon(
                   Icons.close,
-                  color: Colors.black87,
+                  color: Colors.orange,
                 ),
                 title: Text(
                   'Rejected',
@@ -78,6 +83,28 @@ class _HomeBhInvitedState extends State<HomeBhInvited> {
                       fontSize: 20.0),
                 ),
               )),
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Home_BH_Profile.id);
+            },
+            child: Card(
+                color: Colors.white,
+                elevation: 8,
+                margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.person,
+                    color: Colors.orange,
+                  ),
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontFamily: 'SourceSansPro',
+                        fontSize: 20.0),
+                  ),
+                )),
+          ),
           SizedBox(
             height: 25.0,
           ),

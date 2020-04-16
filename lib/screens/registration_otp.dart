@@ -1,20 +1,51 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:sk_school/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home_screen_bh.dart';
+import 'home_T_screen.dart';
 
-class Forget_pass extends StatefulWidget {
-  static String id = 'forget_pass';
+class Registration_Otp extends StatefulWidget {
+  static String id = 'registration_otp';
   @override
-  _Forget_passState createState() => _Forget_passState();
+  _Registration_OtpState createState() => _Registration_OtpState();
 }
 
-class _Forget_passState extends State<Forget_pass> {
-  String mobile;
+class _Registration_OtpState extends State<Registration_Otp> {
   ProgressDialog pr;
-
+  String first_name,
+      last_name,
+      email_id,
+      mobile,
+      category,
+      pass,
+      address,
+      district,
+      state,
+      pin,
+      otp,
+      input_otp,
+      qualification;
   @override
   Widget build(BuildContext context) {
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    if (arguments != null) {
+      first_name = arguments['name'];
+      last_name = arguments['lname'];
+      email_id = arguments['email'];
+      mobile = arguments['mobile'];
+      category = arguments['category'];
+      pass = arguments['password'];
+      qualification = arguments['qualification'];
+      address = arguments['address'];
+      district = arguments['district'];
+      state = arguments['state'];
+      pin = arguments['pin'];
+      otp = arguments['otp'];
+    }
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
     return MaterialApp(
@@ -32,7 +63,7 @@ class _Forget_passState extends State<Forget_pass> {
                 child: new Container(
                   child: new Center(
                       child: new Column(children: [
-                    new Padding(padding: EdgeInsets.only(top: 14.0)),
+                    new Padding(padding: EdgeInsets.only(top: 34.0)),
                     new Text(
                       'Sk School',
                       style: new TextStyle(color: Colors.white, fontSize: 25.0),
@@ -41,11 +72,12 @@ class _Forget_passState extends State<Forget_pass> {
                     TextField(
                       style: TextStyle(color: Colors.white),
                       onChanged: (value) {
-                        mobile = value; //Do something with the user input.
+                        input_otp = value; //Do something with the user input.
                       },
                       keyboardType: TextInputType.number,
+                      obscureText: true,
                       decoration: InputDecoration(
-                        hintText: 'Enter your mobile',
+                        hintText: 'Enter OTP',
                         hintStyle: TextStyle(color: Colors.white),
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),
@@ -75,12 +107,16 @@ class _Forget_passState extends State<Forget_pass> {
                         elevation: 5.0,
                         child: MaterialButton(
                           onPressed: () {
-                            checkexistings(); //Implement login functionality.
+                            if (input_otp != null)
+                              checkOTP();
+                            else
+                              dialog_show('Invalid Input',
+                                  'You have not entered correctly.'); //Implement login functionality.
                           },
                           minWidth: 200.0,
                           height: 42.0,
                           child: Text(
-                            'Forgot',
+                            'Submit',
                           ),
                         ),
                       ),
@@ -89,24 +125,59 @@ class _Forget_passState extends State<Forget_pass> {
                 ))));
   }
 
-  void checkexistings() async {
-    await pr.show();
-    dart_mongo.Db db = dart_mongo.Db(URL);
-    await db.open();
-    print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection(user_coll);
-    List val = await usersCollection
-        .find(dart_mongo.where.eq("mobile", mobile))
-        .toList();
-    if (val.length == 0) {
-      pr.hide().then((isHidden) {
-        dialog_show('Not Found!', 'The mobile does not exist.');
-      });
-    } else {
-      pr.hide().then((isHidden) {
-        dialog_show('Received', 'Your request is registered.');
-      });
-    }
+  void checkOTP() async {
+    if (input_otp == otp) {
+      await pr.show();
+      dart_mongo.Db db = dart_mongo.Db(URL);
+      try {
+        await db.open().timeout(const Duration(seconds: 15));
+      } on Exception catch (_) {
+        pr.hide().then((isHidden) {
+          dialog_show('Error', 'Some error in connecting database!');
+        });
+      }
+      print('database connected');
+      dart_mongo.DbCollection usersCollection = db.collection(user_coll);
+      List val = await usersCollection
+          .find(dart_mongo.where.eq("email", email_id))
+          .toList();
+      if (val.length == 0) {
+        List val2 = await usersCollection
+            .find(dart_mongo.where.eq("mobile", mobile))
+            .toList();
+        if (val2.length == 0) {
+          await usersCollection.insertAll([
+            {
+              'name': first_name,
+              'lname': last_name,
+              'email': email_id,
+              'mobile': mobile,
+              'password': pass,
+              'qualification': qualification,
+              'address': address,
+              'district': district,
+              'state': state,
+              'pin': pin,
+              'category': category
+            },
+          ]);
+          print('database inserted');
+          await db.close();
+          pr.hide().then((isHidden) {
+            addStringToSF();
+          });
+        } else {
+          await db.close();
+          pr.hide();
+          dialog_show('Already User', 'Mobile already exist.Try login');
+        }
+      } else {
+        await db.close();
+        pr.hide();
+        dialog_show('Already User', 'Email already exist.Try login');
+      }
+    } else
+      dialog_show('Incorrect OTP', 'The OTP you entered is not correct.!');
   }
 
   void dialog_show(String s, String t) {
@@ -144,5 +215,18 @@ class _Forget_passState extends State<Forget_pass> {
             ],
           );
         });
+  }
+
+  addStringToSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('loginsts', "1yes");
+    prefs.setString('Cat', category);
+    prefs.setString('email', email_id);
+    if (category == '1')
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Home_screen.id, (Route<dynamic> route) => false);
+    else if (category == '2')
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          HomeScreenBh.id, (Route<dynamic> route) => false);
   }
 }

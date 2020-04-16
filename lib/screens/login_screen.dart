@@ -183,15 +183,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     dart_mongo.Db db = dart_mongo.Db(URL);
     try {
-      await db.open().timeout(const Duration(seconds: 15));
+      await db.open().timeout(const Duration(seconds: 25));
     } on Exception catch (_) {
       pr.hide().then((isHidden) {
         dialog_show('Error', 'Some error in connecting database!');
       });
     }
     print('database connected');
-    dart_mongo.DbCollection usersCollection =
-        db.collection('testInsertWithObjectId');
+    dart_mongo.DbCollection usersCollection = db.collection(user_coll);
     List val = await usersCollection
         .find(dart_mongo.where.eq("email", email))
         .toList();
