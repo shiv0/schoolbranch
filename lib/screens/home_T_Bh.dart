@@ -12,7 +12,7 @@ class HomeTBh extends StatefulWidget {
 class _HomeBhState extends State<HomeTBh> {
   List<Choice> card_list = [];
   List<Choice> _searchResult = [];
-  String email, password, subject, re;
+  String email, password, subject, re, select_sub, select_amt, select_district;
   TextEditingController controller = new TextEditingController();
 
   ProgressDialog pr;
@@ -24,6 +24,9 @@ class _HomeBhState extends State<HomeTBh> {
     getUserCards();
   }
 
+  List<String> subject_list = ['Physics.', 'Chemistry.'],
+      amount_list = ['16', '25'],
+      district_list = ['district11', 'district22'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +67,141 @@ class _HomeBhState extends State<HomeTBh> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15.0, vertical: 5),
+                    child: Text(
+                      'Filter By',
+                      style: TextStyle(color: Colors.black87, fontSize: 17),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            canvasColor: Colors.white,
+                          ),
+                          child: DropdownButton<String>(
+                            iconEnabledColor: Colors.black45,
+                            hint: Padding(
+                              padding: const EdgeInsets.only(left: 15.0),
+                              child: Text("Subject",
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                  )),
+                            ),
+                            items: subject_list.map((String value) {
+                              return new DropdownMenuItem<String>(
+                                value: value,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 15.0),
+                                  child: new Text(
+                                    value,
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                select_sub = value;
+                              });
+                              getFilterUserCards();
+                            },
+                            value: select_sub,
+                            elevation: 2,
+                            focusColor: Colors.black45,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                            isDense: true,
+                            iconSize: 40.0,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Theme(
+                            data: Theme.of(context).copyWith(
+                              canvasColor: Colors.white,
+                            ),
+                            child: DropdownButton<String>(
+                              iconEnabledColor: Colors.black45,
+                              hint: Padding(
+                                padding: const EdgeInsets.only(left: 15.0),
+                                child: Text("Amount",
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                    )),
+                              ),
+                              items: amount_list.map((String value) {
+                                return new DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 15.0),
+                                    child: new Text(value),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  select_amt = value;
+                                });
+                                getFilterUserCards();
+                              },
+                              value: select_amt,
+                              elevation: 2,
+                              style: TextStyle(
+                                  color: Colors.black87, fontSize: 15),
+                              isDense: true,
+                              iconSize: 40.0,
+                            )),
+                      ),
+//                      Container(
+//                        padding: EdgeInsets.symmetric(horizontal: 5),
+//                        child: Theme(
+//                            data: Theme.of(context).copyWith(
+//                              canvasColor: Colors.white,
+//                            ),
+//                            child: DropdownButton<String>(
+//                              iconEnabledColor: Colors.black45,
+//                              hint: Padding(
+//                                padding: const EdgeInsets.only(left: 15.0),
+//                                child: Text("All",
+//                                    style: TextStyle(
+//                                      color: Colors.black87,
+//                                    )),
+//                              ),
+//                              items: district_list.map((String value) {
+//                                return new DropdownMenuItem<String>(
+//                                  value: value,
+//                                  child: Padding(
+//                                    padding: const EdgeInsets.only(left: 15.0),
+//                                    child: new Text(value),
+//                                  ),
+//                                );
+//                              }).toList(),
+//                              onChanged: (value) {
+//                                setState(() {
+//                                  select_district = value;
+//                                });
+//                                onSearchFilterChanged('');
+//                              },
+//                              value: select_district,
+//                              elevation: 2,
+//                              style: TextStyle(
+//                                  color: Colors.black87, fontSize: 15),
+//                              isDense: true,
+//                              iconSize: 40.0,
+//                            )),
+//                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -156,6 +294,8 @@ class _HomeBhState extends State<HomeTBh> {
       String amount = val[i]['amount'].toString();
       String description = val[i]['description'];
       String subject = val[i]['subject'];
+      String district = val[i]['district'];
+      String name = val[i]['name'];
       if (start_date == null) {
         start_date = '20-12-02';
       }
@@ -170,6 +310,76 @@ class _HomeBhState extends State<HomeTBh> {
           gender: gender,
           amount: amount,
           description: description,
+          district: district,
+          name: name,
+          subject: subject);
+      list.add(choices);
+    }
+    setState(() {
+      card_list = list;
+      display = true;
+    });
+    await db.close();
+//    pr.hide().then((isHidden) {
+//      print(isHidden);
+//    });
+  }
+
+  void getFilterUserCards() async {
+    String sub, amt, dist;
+    if (select_sub == null) {
+      sub = '';
+    } else
+      sub = select_sub;
+    if (select_amt == null) {
+      amt = '';
+    } else
+      amt = select_amt;
+//    if (select_district == null) {
+//      dist = '';
+//    } else
+//      dist = select_district;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email');
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    await db.open();
+    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('BHCards');
+    List val = await usersCollection
+        .find(dart_mongo.where.match("subject", sub).match("amount", amt))
+        .toList();
+    print('huh$val');
+    List<Choice> list = [];
+    for (int i = val.length - 1; i >= 0; i--) {
+      String duration = val[i]['duration'];
+      String gender = val[i]['gender'];
+      String end_date = val[i]['end_date'].toString();
+      String start_date = val[i]['start_date'].toString();
+      String posted_date = val[i]['posted_date'].toString();
+      String amount = val[i]['amount'].toString();
+      String description = val[i]['description'];
+      String subject = val[i]['subject'];
+      String district = val[i]['district'];
+      String name = val[i]['name'];
+      if (name == null) {
+        name = '-';
+      }
+      if (start_date == null) {
+        start_date = '20-12-02';
+      }
+      if (posted_date == null) {
+        posted_date = '-';
+      }
+      Choice choices = Choice(
+          duration: duration,
+          start_date: start_date,
+          end_date: end_date,
+          posted_date: posted_date,
+          gender: gender,
+          amount: amount,
+          description: description,
+          district: district,
+          name: name,
           subject: subject);
       list.add(choices);
     }
@@ -200,6 +410,27 @@ class _HomeBhState extends State<HomeTBh> {
 
     setState(() {});
   }
+
+  onSearchFilterChanged(String text) async {
+    _searchResult.clear();
+    if (select_sub == null && select_amt == null && select_district == null) {
+      setState(() {});
+      return;
+    }
+    card_list.forEach((userDetail) {
+      if ((userDetail.subject.toLowerCase())
+              .contains(select_sub.toLowerCase()) ||
+          (userDetail.amount.toLowerCase())
+              .contains(select_amt.toLowerCase()) ||
+          (userDetail.district.toLowerCase())
+              .contains(select_district.toLowerCase())) {
+        _searchResult.add(userDetail);
+      } else
+        print(userDetail.subject);
+    });
+
+    setState(() {});
+  }
 }
 
 class Choice {
@@ -211,15 +442,19 @@ class Choice {
   final String description;
   final String subject;
   final String gender;
+  final String district;
+  final String name;
 
   const Choice(
       {this.duration,
       this.start_date,
+      this.name,
       this.end_date,
       this.posted_date,
       this.amount,
       this.description,
       this.subject,
+      this.district,
       this.gender});
 }
 
@@ -256,18 +491,40 @@ class CardItem extends StatelessWidget {
                   child: Row(
                     children: <Widget>[
                       Icon(
-                        Icons.description,
-                        color: Colors.blue,
+                        Icons.supervised_user_circle,
+                        color: Colors.grey,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Text(
-                          choice.subject,
+                          choice.name == null ? '-' : choice.name,
                           style: TextStyle(
                               color: Colors.black87,
                               fontFamily: 'SourceSansPro',
                               fontSize: 25.0,
                               fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.topLeft,
+                ),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.description,
+                        color: Colors.blue,
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(left: 8.0, bottom: 8, top: 8),
+                        child: Text(
+                          choice.subject,
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontFamily: 'SourceSansPro',
+                              fontSize: 16.0),
                         ),
                       ),
                     ],

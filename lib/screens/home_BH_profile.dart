@@ -24,6 +24,10 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
       ppin = '',
       description,
       pdescription = '';
+  List<String> state1 = ['STATEab', 'STATEcd'],
+      district1 = ['district11', 'district22'],
+      district2 = ['district33', 'district44'],
+      districtlist = [];
   final _formKey = GlobalKey<FormState>();
   ProgressDialog pr;
 
@@ -105,24 +109,69 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
                                 style: TextStyle(
                                     fontSize: 15.0, color: Colors.black87),
                               ),
-                              TextFormField(
-                                enabled: editbool,
-                                validator: (String value) {
-                                  if (value != null && value.isEmpty) {
-                                    // ignore: missing_return
-                                    return 'Field Required';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  state =
-                                      value; //Do something with the user input.
-                                },
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    hintText: state,
-                                    labelStyle:
-                                        TextStyle(color: Colors.black87)),
+                              Visibility(
+                                visible: !editbool,
+                                child: TextFormField(
+                                  enabled: editbool,
+                                  validator: (String value) {
+                                    if (value != null && value.isEmpty) {
+                                      // ignore: missing_return
+                                      return 'Field Required';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    state =
+                                        value; //Do something with the user input.
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                      hintText: state,
+                                      labelStyle:
+                                          TextStyle(color: Colors.black87)),
+                                ),
+                              ),
+                              Visibility(
+                                visible: editbool,
+                                child: Container(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    hint: Padding(
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: Text("Select State",
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                          )),
+                                    ),
+                                    items: state1.map((String value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: new Text(value),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        state = value;
+                                        print(state);
+                                        if (value == 'STATEab')
+                                          districtlist = district1;
+                                        else
+                                          districtlist = district2;
+                                        district = null;
+                                      });
+                                    },
+                                    value: state,
+                                    elevation: 2,
+                                    style: TextStyle(
+                                        color: Colors.black87, fontSize: 15),
+                                    isDense: true,
+                                    iconSize: 40.0,
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 height: 20.0,
@@ -132,21 +181,61 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
                                 style: TextStyle(
                                     fontSize: 15.0, color: Colors.black87),
                               ),
-                              TextFormField(
-                                enabled: editbool,
-                                validator: (String value) {
-                                  if (value != null && value.isEmpty) {
-                                    // ignore: missing_return
-                                    return 'Field Required';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  district =
-                                      value; //Do something with the user input.
-                                },
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(hintText: district),
+                              Visibility(
+                                visible: !editbool,
+                                child: TextFormField(
+                                  enabled: editbool,
+                                  validator: (String value) {
+                                    if (value != null && value.isEmpty) {
+                                      // ignore: missing_return
+                                      return 'Field Required';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    district =
+                                        value; //Do something with the user input.
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  decoration:
+                                      InputDecoration(hintText: district),
+                                ),
+                              ),
+                              Visibility(
+                                visible: editbool,
+                                child: Container(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    hint: Padding(
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: Text("Select District",
+                                          style: TextStyle(
+                                            color: Colors.black87,
+                                          )),
+                                    ),
+                                    items: districtlist.map((String value) {
+                                      return new DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: new Text(value),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        district = value;
+                                      });
+                                    },
+                                    value: district,
+                                    elevation: 2,
+                                    style: TextStyle(
+                                        color: Colors.black87, fontSize: 15),
+                                    isDense: true,
+                                    iconSize: 40.0,
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 height: 20.0,
@@ -294,6 +383,10 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
         mobile = val[0]['mobile'];
         pin = val[0]['pin'];
         display = true;
+        if (state == 'STATEab')
+          districtlist = district1;
+        else
+          districtlist = district2;
       });
       await db.close();
     }

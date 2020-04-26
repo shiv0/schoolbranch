@@ -32,10 +32,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       otp,
       qualification;
   ProgressDialog pr;
-  List<String> district1 = ['DESTRICTab', 'DESTRICTcd'],
-      state1 = ['state11', 'state22'],
-      state2 = ['state33', 'state44'],
-      statelist = [];
+  List<String> state1 = ['STATEab', 'STATEcd'],
+      district1 = ['district11', 'district22'],
+      district2 = ['district33', 'district44'],
+      districtlist = [];
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +236,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ],
                       onChanged: (value) {
                         setState(() {
+                          FocusScope.of(context).requestFocus(new FocusNode());
                           category = value;
                         });
                       },
@@ -277,6 +278,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
+                          FocusScope.of(context).requestFocus(new FocusNode());
                           qualification = value;
                         });
                       },
@@ -327,12 +329,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       isExpanded: true,
                       hint: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
-                        child: Text("Select District",
+                        child: Text("Select State",
                             style: TextStyle(
                               color: Colors.white,
                             )),
                       ),
-                      items: district1.map((String value) {
+                      items: state1.map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,
                           child: Padding(
@@ -343,16 +345,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          district = value;
-                          print(district);
-                          if (value == 'DESTRICTab')
-                            statelist = state1;
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          state = value;
+                          print(state);
+                          if (value == 'STATEab')
+                            districtlist = district1;
                           else
-                            statelist = state2;
-                          state = null;
+                            districtlist = district2;
+                          district = null;
                         });
                       },
-                      value: district,
+                      value: state,
                       elevation: 2,
                       style: TextStyle(color: Colors.white, fontSize: 15),
                       isDense: true,
@@ -373,12 +376,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       isExpanded: true,
                       hint: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
-                        child: Text("Select State",
+                        child: Text("Select District",
                             style: TextStyle(
                               color: Colors.white,
                             )),
                       ),
-                      items: statelist.map((String value) {
+                      items: districtlist.map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,
                           child: Padding(
@@ -389,10 +392,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          state = value;
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          district = value;
                         });
                       },
-                      value: state,
+                      value: district,
                       elevation: 2,
                       style: TextStyle(color: Colors.white, fontSize: 15),
                       isDense: true,

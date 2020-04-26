@@ -95,12 +95,12 @@ class _HomeBhFrontState extends State<HomeBhFront> {
     String email = prefs.getString('email');
     dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
-    print('database connected');
+//    print('database connected');
     dart_mongo.DbCollection usersCollection = db.collection('BHCards');
     List val = await usersCollection
         .find(dart_mongo.where.eq("email", email))
         .toList();
-    print('huh$val');
+//    print('huh$val');
     List<Choice> list = [];
     for (int i = val.length - 1; i >= 0; i--) {
       String duration = val[i]['duration'];
@@ -265,27 +265,27 @@ class CardItem extends StatelessWidget {
                   ),
                   alignment: Alignment.topLeft,
                 ),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.attach_money,
-                        color: Colors.deepOrangeAccent,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          choice.amount,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontFamily: 'SourceSansPro',
-                              fontSize: 15.0),
-                        ),
-                      ),
-                    ],
-                  ),
-                  alignment: Alignment.topLeft,
-                ),
+//                Container(
+//                  child: Row(
+//                    children: <Widget>[
+//                      Icon(
+//                        Icons.attach_money,
+//                        color: Colors.deepOrangeAccent,
+//                      ),
+//                      Padding(
+//                        padding: const EdgeInsets.all(8.0),
+//                        child: Text(
+//                          choice.amount,
+//                          style: TextStyle(
+//                              color: Colors.black87,
+//                              fontFamily: 'SourceSansPro',
+//                              fontSize: 15.0),
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                  alignment: Alignment.topLeft,
+//                ),
                 Container(
                   child: Row(
                     children: <Widget>[
@@ -307,23 +307,65 @@ class CardItem extends StatelessWidget {
                   ),
                   alignment: Alignment.topLeft,
                 ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
-                        child: Text(
-                          choice.posted_date,
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15.0,
-                              fontStyle: FontStyle.italic),
-                        ),
+//                Container(
+//                  child: Row(
+//                    mainAxisAlignment: MainAxisAlignment.end,
+//                    children: <Widget>[
+//                      Padding(
+//                        padding: const EdgeInsets.only(right: 4.0),
+//                        child: Text(
+//                          choice.posted_date,
+//                          style: TextStyle(
+//                              color: Colors.grey,
+//                              fontSize: 15.0,
+//                              fontStyle: FontStyle.italic),
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                  alignment: Alignment.topRight,
+//                ),
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              choice.posted_date,
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'SourceSansPro',
+                                  fontSize: 15.0,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  alignment: Alignment.topRight,
+                      alignment: Alignment.topLeft,
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4.0),
+                            child: Text(
+                              '\$ ' + choice.amount,
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontFamily: 'SourceSansPro',
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      alignment: Alignment.topRight,
+                    ),
+                  ],
                 ),
               ],
             ),

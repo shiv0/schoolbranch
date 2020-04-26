@@ -225,45 +225,47 @@ class CardItem extends StatelessWidget {
                   ),
                   alignment: Alignment.topLeft,
                 ),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.attach_money,
-                        color: Colors.deepOrangeAccent,
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              choice.posted_date,
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontFamily: 'SourceSansPro',
+                                  fontSize: 15.0,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          choice.amount,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontFamily: 'SourceSansPro',
-                              fontSize: 15.0),
-                        ),
+                      alignment: Alignment.topLeft,
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4.0),
+                            child: Text(
+                              '\$ ' + choice.amount,
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontFamily: 'SourceSansPro',
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  alignment: Alignment.topLeft,
-                ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
-                        child: Text(
-                          choice.posted_date,
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'SourceSansPro',
-                              fontSize: 15.0,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                    ],
-                  ),
-                  alignment: Alignment.topRight,
+                      alignment: Alignment.topRight,
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:sk_school/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_multiselect/flutter_multiselect.dart';
 
 class Add_Form_BH extends StatefulWidget {
   static String id = 'add_form_bh';
@@ -25,7 +26,11 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
       gender,
       qualification,
       email,
-      mobile;
+      mobile,
+      subject_label = 'Select Subjects',
+      gender_label = 'Select Gender';
+  List<String> subject_list = ['Physics.', 'Chemistry.'];
+  List<String> gender_list = ['Male', 'Female'];
   final _formKey = GlobalKey<FormState>();
 
   String user_name, lname;
@@ -73,44 +78,54 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
                         SizedBox(
                           height: 25.0,
                         ),
-                        DropdownButtonFormField<String>(
-                          isDense: true,
-                          iconSize: 20.0,
-                          value: subject,
-                          decoration:
-                              InputDecoration(labelText: 'Select Subject'),
-                          onChanged: (salutation) =>
-                              setState(() => subject = salutation),
-                          validator: (value) =>
-                              value == null ? 'Please select' : null,
-                          items: ['Physics.', 'Chemistry.']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        InkWell(
+                          onTap: () {
+                            _showMultiSelect_subject(context);
+                          },
+                          child: IgnorePointer(
+                            child: DropdownButtonFormField<String>(
+                              isDense: true,
+                              iconSize: 20.0,
+                              value: subject,
+                              decoration:
+                                  InputDecoration(labelText: subject_label),
+                              onChanged: (salutation) =>
+                                  setState(() => subject = salutation),
+                              items: subject_list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                         SizedBox(
                           height: 25.0,
                         ),
-                        DropdownButtonFormField<String>(
-                          isDense: true,
-                          iconSize: 20.0,
-                          value: gender,
-                          decoration:
-                              InputDecoration(labelText: 'Select Gender'),
-                          onChanged: (salutation) =>
-                              setState(() => gender = salutation),
-                          validator: (value) =>
-                              value == null ? 'Please select' : null,
-                          items: ['Male', 'Female']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        InkWell(
+                          onTap: () {
+                            _showMultiSelect_gender(context);
+                          },
+                          child: IgnorePointer(
+                            child: DropdownButtonFormField<String>(
+                              isDense: true,
+                              iconSize: 20.0,
+                              value: gender,
+                              decoration:
+                                  InputDecoration(labelText: gender_label),
+                              onChanged: (salutation) =>
+                                  setState(() => gender = salutation),
+                              items: gender_list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                         SizedBox(
                           height: 15.0,
@@ -233,7 +248,12 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
                             ),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
-                                submit();
+                                if (subject_label == 'Select Subjects' ||
+                                    gender_label == 'Select Gender') {
+                                  dialog_show('Incomplete Form',
+                                      'Please complete all the fields.');
+                                } else
+                                  submit();
                               } else {
                                 setState(() {
                                   _autoValidate = true;
@@ -290,8 +310,8 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
       {
         'email': email,
         'name': user_name,
-        'subject': subject,
-        'gender': gender,
+        'subject': subject_label,
+        'gender': gender_label,
         'duration': duration,
         'start_date': "${selectedDate1.toLocal()}".split(' ')[0],
         'end_date': "${selectedDate2.toLocal()}".split(' ')[0],
@@ -323,6 +343,62 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
       }
       user_name = '$user_name $lname';
     }
+  }
+
+  void _showMultiSelect_subject(BuildContext context) async {
+    final items = <MultiSelectDialogItem<int>>[
+      MultiSelectDialogItem(1, 'Physics.'),
+      MultiSelectDialogItem(2, 'Chemistry.'),
+    ];
+
+    final selectedValues = await showDialog<Set<int>>(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelectDialog(
+          items: items,
+          title: 'Select Subjects',
+        );
+      },
+    );
+    String subjects_selected =
+        subject_list.elementAt(selectedValues.elementAt(0) - 1);
+    for (int i = 1; i < selectedValues.length; i++) {
+      subjects_selected = subjects_selected +
+          ',' +
+          subject_list.elementAt(selectedValues.elementAt(i) - 1);
+    }
+    print(subjects_selected);
+    setState(() {
+      subject_label = subjects_selected;
+    });
+  }
+
+  void _showMultiSelect_gender(BuildContext context) async {
+    final items = <MultiSelectDialogItem<int>>[
+      MultiSelectDialogItem(1, 'Male'),
+      MultiSelectDialogItem(2, 'Female'),
+    ];
+
+    final selectedValues = await showDialog<Set<int>>(
+      context: context,
+      builder: (BuildContext context) {
+        return MultiSelectDialog(
+          items: items,
+          title: 'Select Gender',
+        );
+      },
+    );
+    String gender_selected =
+        gender_list.elementAt(selectedValues.elementAt(0) - 1);
+    for (int i = 1; i < selectedValues.length; i++) {
+      gender_selected = gender_selected +
+          ',' +
+          gender_list.elementAt(selectedValues.elementAt(i) - 1);
+    }
+    print(gender_selected);
+    setState(() {
+      gender_label = gender_selected;
+    });
   }
 
   void dialog_show(String s, String t) {
@@ -360,5 +436,93 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
             ],
           );
         });
+  }
+}
+
+class MultiSelectDialogItem<V> {
+  const MultiSelectDialogItem(this.value, this.label);
+
+  final V value;
+  final String label;
+}
+
+class MultiSelectDialog<V> extends StatefulWidget {
+  MultiSelectDialog(
+      {Key key, this.items, this.initialSelectedValues, this.title})
+      : super(key: key);
+
+  final List<MultiSelectDialogItem<V>> items;
+  final Set<V> initialSelectedValues;
+  String title;
+
+  @override
+  State<StatefulWidget> createState() =>
+      _MultiSelectDialogState<V>(title: title);
+}
+
+class _MultiSelectDialogState<V> extends State<MultiSelectDialog<V>> {
+  final _selectedValues = Set<V>();
+  String title;
+  _MultiSelectDialogState({this.title});
+
+  void initState() {
+    super.initState();
+    if (widget.initialSelectedValues != null) {
+      _selectedValues.addAll(widget.initialSelectedValues);
+    }
+  }
+
+  void _onItemCheckedChange(V itemValue, bool checked) {
+    setState(() {
+      if (checked) {
+        _selectedValues.add(itemValue);
+      } else {
+        _selectedValues.remove(itemValue);
+      }
+    });
+  }
+
+  void _onCancelTap() {
+    Navigator.pop(context);
+  }
+
+  void _onSubmitTap() {
+    Navigator.pop(context, _selectedValues);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(title),
+      contentPadding: EdgeInsets.only(top: 12.0),
+      content: SingleChildScrollView(
+        child: ListTileTheme(
+          contentPadding: EdgeInsets.fromLTRB(14.0, 0.0, 24.0, 0.0),
+          child: ListBody(
+            children: widget.items.map(_buildItem).toList(),
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('CANCEL'),
+          onPressed: _onCancelTap,
+        ),
+        FlatButton(
+          child: Text('OK'),
+          onPressed: _onSubmitTap,
+        )
+      ],
+    );
+  }
+
+  Widget _buildItem(MultiSelectDialogItem<V> item) {
+    final checked = _selectedValues.contains(item.value);
+    return CheckboxListTile(
+      value: checked,
+      title: Text(item.label),
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (checked) => _onItemCheckedChange(item.value, checked),
+    );
   }
 }
