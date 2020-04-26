@@ -583,7 +583,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     int rpstatus;
     String message;
     http.Response response = await http.post(
-      'http://trickleme.live/sms/sms.php',
+      URL_otp,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
