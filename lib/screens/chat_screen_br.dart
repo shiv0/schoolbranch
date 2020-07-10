@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
@@ -8,46 +6,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen_bh.dart';
 import 'home_T_screen.dart';
 
-class Registration_Otp extends StatefulWidget {
-  static String id = 'registration_otp';
+class chat_screen_br extends StatefulWidget {
+  static String id = 'chat_screen_br';
   @override
-  _Registration_OtpState createState() => _Registration_OtpState();
+  _chat_screen_brState createState() => _chat_screen_brState();
 }
 
-class _Registration_OtpState extends State<Registration_Otp> {
+class _chat_screen_brState extends State<chat_screen_br> {
+  String input_otp;
   ProgressDialog pr;
-  String first_name,
-      last_name,
-      email_id,
-      mobile,
-      category,
-      pass,
-      address,
-      district,
-      state,
-      pin,
-      otp,
-      input_otp,
-      qualification;
+  String email_teachers, email_br, name_T;
+
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    if (arguments != null) {
-      first_name = arguments['name'];
-      last_name = arguments['lname'];
-      email_id = arguments['email'];
-      mobile = arguments['mobile'];
-      category = arguments['category'];
-      pass = arguments['password'];
-      qualification = arguments['qualification'];
-      address = arguments['address'];
-      district = arguments['district'];
-      state = arguments['state'];
-      pin = arguments['pin'];
-      otp = arguments['otp'];
-    }
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    if (arguments != null) {
+      email_teachers = arguments['email'];
+      name_T = arguments['name'];
+    }
+    getuserdata();
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Welcome to Flutter",
@@ -74,10 +53,9 @@ class _Registration_OtpState extends State<Registration_Otp> {
                       onChanged: (value) {
                         input_otp = value; //Do something with the user input.
                       },
-                      keyboardType: TextInputType.number,
-                      obscureText: true,
+                      keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        hintText: 'Enter OTP',
+                        hintText: 'Enter MSG',
                         hintStyle: TextStyle(color: Colors.white),
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),
@@ -108,7 +86,7 @@ class _Registration_OtpState extends State<Registration_Otp> {
                         child: MaterialButton(
                           onPressed: () {
                             if (input_otp != null)
-                              checkOTP();
+                              insertMsg();
                             else
                               dialog_show('Invalid Input',
                                   'You have not entered correctly.'); //Implement login functionality.
@@ -125,59 +103,54 @@ class _Registration_OtpState extends State<Registration_Otp> {
                 ))));
   }
 
-  void checkOTP() async {
-    if (input_otp != otp) {
-      await pr.show();
-      dart_mongo.Db db = dart_mongo.Db(URL);
-      try {
-        await db.open().timeout(const Duration(seconds: 15));
-      } on Exception catch (_) {
-        pr.hide().then((isHidden) {
-          dialog_show('Error', 'Some error in connecting database!');
-        });
-      }
-      print('database connected');
-      dart_mongo.DbCollection usersCollection = db.collection(user_coll);
-      List val = await usersCollection
-          .find(dart_mongo.where.eq("email", email_id))
-          .toList();
-      if (val.length == 0) {
-        List val2 = await usersCollection
-            .find(dart_mongo.where.eq("mobile", mobile))
-            .toList();
-        if (val2.length == 0) {
-          await usersCollection.insertAll([
-            {
-              'name': first_name,
-              'lname': last_name,
-              'email': email_id,
-              'mobile': mobile,
-              'password': pass,
-              'qualification': qualification,
-              'address': address,
-              'district': district,
-              'state': state,
-              'pin': pin,
-              'category': category
-            },
-          ]);
-          print('database inserted');
-          await db.close();
-          pr.hide().then((isHidden) {
-            addStringToSF();
-          });
-        } else {
-          await db.close();
-          pr.hide();
-          dialog_show('Already User', 'Mobile already exist.Try login');
-        }
-      } else {
-        await db.close();
-        pr.hide();
-        dialog_show('Already User', 'Email already exist.Try login');
-      }
-    } else
-      dialog_show('Incorrect OTP', 'The OTP you entered is not correct.!');
+  dart_mongo.Db db;
+  void insertMsg() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    email_br = prefs.getString('email');
+    await pr.show();
+    db = dart_mongo.Db(URL);
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {
+      pr.hide().then((isHidden) {
+        dialog_show('Error', 'Some error in connecting database!');
+      });
+    }
+    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('Text');
+//    List val = await usersCollection
+//        .find(dart_mongo.where.eq("email", email_id))
+//        .toList();
+//    if (val.length == 0) {
+//      List val2 = await usersCollection
+//          .find(dart_mongo.where.eq("mobile", mobile))
+//          .toList();
+//      if (val2.length == 0) {
+    await usersCollection.insertAll([
+      {
+        'emailT': email_teachers,
+        'emailBr': email_br,
+        'status': 'SBB',
+        'msg': input_otp,
+        'Bname': user_name,
+        'Tname': name_T,
+        'Rstatus': '1',
+      },
+    ]);
+    print('database inserted');
+    await db.close();
+    pr.hide().then((isHidden) {
+      Navigator.of(context).pop();
+    }); //      } else {
+//        await db.close();
+//        pr.hide();
+//        dialog_show('Already User', 'Mobile already exist.Try login');
+//      }
+//    } else {
+//      await db.close();
+//      pr.hide();
+//      dialog_show('Already User', 'Email already exist.Try login');
+//    }
   }
 
   void dialog_show(String s, String t) {
@@ -217,16 +190,33 @@ class _Registration_OtpState extends State<Registration_Otp> {
         });
   }
 
-  addStringToSF() async {
+  String user_name, lname, mobile;
+  void getuserdata() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('loginsts', "1yes");
-    prefs.setString('Cat', category);
-    prefs.setString('email', email_id);
-    if (category == '1')
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Home_screen.id, (Route<dynamic> route) => false);
-    else if (category == '2')
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          HomeScreenBh.id, (Route<dynamic> route) => false);
+    email_br = prefs.getString('email');
+    db = dart_mongo.Db(URL);
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {
+      pr.hide().then((isHidden) {
+        dialog_show('Error', 'Some error in connecting database!');
+      });
+    }
+    dart_mongo.DbCollection usersCollection = db.collection(user_coll);
+    List val = await usersCollection
+        .find(dart_mongo.where.eq("email", email_br))
+        .toList();
+    if (val.length == 0) {
+      dialog_show('Invalid Login', 'Enter the correct username and password.');
+    } else {
+      user_name = val[0]['name'];
+      lname = val[0]['lname'];
+      mobile = val[0]['mobile'];
+      if (lname == null) {
+        lname = 'S';
+      }
+      user_name = '$user_name $lname';
+      print(user_name);
+    }
   }
 }

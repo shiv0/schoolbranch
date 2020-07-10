@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 import 'package:sk_school/constants.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sk_school/screens/chat_screen_br.dart';
 import 'package:sk_school/screens/chat_screen_teachers.dart';
 
-class Card_Details_T_BH extends StatefulWidget {
-  static String id = 'card_details_T_bh';
+class Card_Details_BH_T extends StatefulWidget {
+  static String id = 'card_details_bh_T';
   @override
-  _Card_Details_T_BHState createState() => _Card_Details_T_BHState();
+  _Card_Details_BH_TState createState() => _Card_Details_BH_TState();
 }
 
-class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
+class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
   String email = "",
       subject = "",
       duration = "",
@@ -32,23 +30,20 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
       pdate = "",
       pdescription = "",
       pemail = "",
+      end_date = "",
+      posted_date = "",
       pstatus = "",
+      start_date = "",
       status = "",
+      gender = "",
       pin = "";
   ProgressDialog pr;
   bool display = false;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
-
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     if (arguments != null) {
       pemail = arguments['email'];
@@ -58,6 +53,10 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
       pamount = arguments['amount'];
       pdescription = arguments['description'];
       pstatus = arguments['status'];
+      gender = arguments['gender'];
+      end_date = arguments['end_date'];
+      start_date = arguments['start_date'];
+      posted_date = arguments['posted_date'];
       if (name == "") getUserData();
     }
     return MaterialApp(
@@ -741,6 +740,8 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
     List val = await usersCollection
         .find(dart_mongo.where.eq("email", pemail))
         .toList();
+    print(val);
+
     if (val.length != 0) {
       await db.close();
 
@@ -767,6 +768,67 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
 //            print(pr.isShowing());
 //          });
 //        });
+      });
+    }
+  }
+
+  String user_name;
+  dart_mongo.Db db;
+
+  void updatestatus(String s) async {
+    db = dart_mongo.Db(URL);
+    await db.open();
+    print('database connected');
+    await getuserdata();
+    dart_mongo.DbCollection usersCollection = db.collection('BHCards');
+    await usersCollection.update(
+      await usersCollection.findOne(dart_mongo.where
+          .eq("email", pemail)
+          .and(dart_mongo.where.eq("amount", amount))),
+      {
+        'email': email,
+        'name': user_name,
+        'subject': subject,
+        'gender': gender,
+        'duration': duration,
+        'start_date': start_date,
+        'end_date': end_date,
+        'amount': amount,
+        'description': 'hell',
+        'posted_date': posted_date,
+        'status': s,
+      },
+    );
+    print('database inserted');
+    String ismessage = s == 'Messaged' ? '1' : '0';
+    if (ismessage == '1') {
+      Navigator.pushNamed(context, chat_screen_teachers.id,
+          arguments: {'email': email, 'name': user_name});
+    } else {
+      dart_mongo.DbCollection usersCollection = db.collection('Text');
+//    List val = await usersCollection
+//        .find(dart_mongo.where.eq("email", email_id))
+//        .toList();
+//    if (val.length == 0) {
+//      List val2 = await usersCollection
+//          .find(dart_mongo.where.eq("mobile", mobile))
+//          .toList();
+//      if (val2.length == 0) {
+      await usersCollection.insertAll([
+        {
+          'emailT': pemail,
+          'emailBr': email,
+          'status': 'SBN',
+          'msg': 'You are ' + s + ' by ' + user_name,
+          'Bname': name,
+          'Tname': user_name,
+          'Rstatus': '1',
+        },
+      ]);
+      print('database inserted');
+      await db.close();
+      pr.hide().then((isHidden) {
+        Navigator.of(context).pop();
       });
     }
   }
@@ -808,102 +870,6 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
         });
   }
 
-  String user_name;
-  dart_mongo.Db db;
-
-  void updatestatus(String s) async {
-    db = dart_mongo.Db(URL);
-    await db.open();
-    print('database connected');
-    await getuserdata();
-    dart_mongo.DbCollection usersCollection = db.collection('Cards');
-    await usersCollection.update(
-      await usersCollection.findOne(dart_mongo.where
-          .eq("email", email)
-          .and(dart_mongo.where.eq("date", pdate))
-          .and(dart_mongo.where.eq("duration", pduration))),
-      {
-        'email': email,
-        'name': user_name,
-        'subject': subject,
-        'duration': duration,
-        'date': date,
-        'amount': amount,
-        'description': description,
-        'state': state,
-        'status': s
-      },
-    );
-    print('database inserted');
-    String ismessage = s == 'Messaged' ? '1' : '0';
-    if (ismessage == '1') {
-      Navigator.pushNamed(context, chat_screen_br.id,
-          arguments: {'email': email});
-    } else {
-      dart_mongo.DbCollection usersCollection = db.collection('Text');
-//    List val = await usersCollection
-//        .find(dart_mongo.where.eq("email", email_id))
-//        .toList();
-//    if (val.length == 0) {
-//      List val2 = await usersCollection
-//          .find(dart_mongo.where.eq("mobile", mobile))
-//          .toList();
-//      if (val2.length == 0) {
-      await usersCollection.insertAll([
-        {
-          'emailT': email,
-          'emailBr': email2,
-          'status': 'SBN',
-          'msg': 'You are ' + s + ' by ' + user_name2,
-          'Bname': user_name2,
-          'Tname': user_name,
-          'Rstatus': '1',
-        },
-      ]);
-      print('database inserted');
-      await db.close();
-      pr.hide().then((isHidden) {
-        Navigator.of(context).pop();
-      });
-    }
-//    dart_mongo.DbCollection usersCollection2 = db.collection('Notifications');
-//    await usersCollection2.insertAll([
-//      {
-//        'email': email,
-//        'emailfrom': email2,
-//        'notification': 'You are ' + s + ' by ' + user_name2,
-//        'ismessage': ismessage,
-//        'message1': '',
-//        'message2': '',
-//      },
-//    ]);
-//    print('database inserted');
-//    dart_mongo.DbCollection usersCollection3 = db.collection('Notify');
-//    List val = await usersCollection3
-//        .find(dart_mongo.where.eq("email", email))
-//        .toList();
-//    if (val.length == 0) {
-//      await usersCollection3.insertAll([
-//        {
-//          'email': email,
-//          'notification': '1',
-//        },
-//      ]);
-//    } else {
-//      await usersCollection.update(
-//          await usersCollection.findOne(dart_mongo.where.eq("email", email)), {
-//        'email': email,
-//        'notification': '1',
-//      });
-//    }
-//    print('database inserted');
-//    await db.close();
-//    pr.hide().then((isHidden) {
-//      Navigator.of(context).pop();
-//    });
-  }
-
-  String user_name2, email2;
   void getuserdata() async {
     dart_mongo.DbCollection usersCollection = db.collection(user_coll);
     List val = await usersCollection
@@ -915,28 +881,11 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
       user_name = val[0]['name'];
       lname = val[0]['lname'];
       mobile = val[0]['mobile'];
+      qualification = val[0]['qualification'];
       if (lname == null) {
         lname = 'S';
       }
       user_name = '$user_name $lname';
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      email2 = prefs.getString('email');
-      dart_mongo.DbCollection usersCollection = db.collection(user_coll);
-      List val2 = await usersCollection
-          .find(dart_mongo.where.eq("email", email2))
-          .toList();
-      if (val.length == 0) {
-        dialog_show(
-            'Invalid Login', 'Enter the correct username and password.');
-      } else {
-        user_name2 = val2[0]['name'];
-        String lname2 = val2[0]['lname'];
-
-        if (lname2 == null) {
-          lname2 = 'S';
-        }
-        user_name2 = '$user_name2 $lname2';
-      }
     }
   }
 }

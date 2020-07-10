@@ -3,6 +3,7 @@ import 'package:sk_school/constants.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
+import 'package:sk_school/screens/card_details_bh_T.dart';
 
 class HomeTBh extends StatefulWidget {
   @override
@@ -255,9 +256,34 @@ class _HomeBhState extends State<HomeTBh> {
 //                            'subject': card_list[index].subject
 //                          });
                               },
-                              child: CardItem(
-                                choice: card_list[index],
-                                item: card_list[index],
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, Card_Details_BH_T.id,
+                                      arguments: {
+                                        'email': card_list[index].email,
+                                        'subject': card_list[index].subject,
+                                        'duration': card_list[index].duration,
+                                        'amount': card_list[index].amount,
+                                        'date': card_list[index].start_date +
+                                            ' - ' +
+                                            card_list[index].end_date,
+                                        'description':
+                                            card_list[index].description,
+                                        'status': card_list[index].status,
+                                        'start_date':
+                                            card_list[index].start_date,
+                                        'end_date': card_list[index].end_date,
+                                        'posted_date':
+                                            card_list[index].posted_date,
+                                        'state': card_list[index].state,
+                                        'gender': card_list[index].gender,
+                                      });
+                                },
+                                child: CardItem(
+                                  choice: card_list[index],
+                                  item: card_list[index],
+                                ),
                               ),
                             );
                           })),
@@ -296,6 +322,18 @@ class _HomeBhState extends State<HomeTBh> {
       String subject = val[i]['subject'];
       String district = val[i]['district'];
       String name = val[i]['name'];
+      String status = val[i]['status'];
+      String state = val[i]['state'];
+      String email = val[i]['email'];
+      if (name == null) {
+        name = 'check';
+      }
+      if (status == null) {
+        status = '-';
+      }
+      if (state == null) {
+        state = '-';
+      }
       if (start_date == null) {
         start_date = '20-12-02';
       }
@@ -311,7 +349,10 @@ class _HomeBhState extends State<HomeTBh> {
           amount: amount,
           description: description,
           district: district,
+          status: status,
           name: name,
+          state: state,
+          email: email,
           subject: subject);
       list.add(choices);
     }
@@ -353,6 +394,7 @@ class _HomeBhState extends State<HomeTBh> {
     for (int i = val.length - 1; i >= 0; i--) {
       String duration = val[i]['duration'];
       String gender = val[i]['gender'];
+      String email = val[i]['email'];
       String end_date = val[i]['end_date'].toString();
       String start_date = val[i]['start_date'].toString();
       String posted_date = val[i]['posted_date'].toString();
@@ -380,6 +422,7 @@ class _HomeBhState extends State<HomeTBh> {
           description: description,
           district: district,
           name: name,
+          email: email,
           subject: subject);
       list.add(choices);
     }
@@ -442,7 +485,10 @@ class Choice {
   final String description;
   final String subject;
   final String gender;
+  final String email;
+  final String status;
   final String district;
+  final String state;
   final String name;
 
   const Choice(
@@ -454,7 +500,10 @@ class Choice {
       this.amount,
       this.description,
       this.subject,
+      this.status,
+      this.email,
       this.district,
+      this.state,
       this.gender});
 }
 

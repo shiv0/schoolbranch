@@ -18,7 +18,7 @@ const kMessageContainerDecoration = BoxDecoration(
   ),
 );
 
-const URL = 'mongodb://user:user123@3.6.175.16:27017/test';
+const URL = 'mongodb://user:user123@3.6.34.87:27017/test';
 const URL_otp = 'http://trickleme.live/sms/sms.php';
 const user_coll = 'users_app';
 const bckcolor = Color(0xffeeeeee);

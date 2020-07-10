@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sk_school/constants.dart';
+import 'package:sk_school/screens/Notify.dart';
 import 'package:sk_school/screens/home_T_Bh.dart';
 import 'package:sk_school/screens/home_T_front.dart';
 import 'package:sk_school/screens/home_T_invited.dart';
 import 'package:sk_school/screens/home_T_requested.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sk_school/screens/msg_list_teachers.dart';
 import 'welcome_screen.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
 
@@ -16,6 +18,7 @@ class Home_screen extends StatefulWidget {
 
 class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
   int _currentindex = 0;
+  bool ring = false;
   final List<Widget> _bodychildren = [
     HomeTFront(),
     HomeTBh(),
@@ -39,23 +42,55 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-//    getUserCards();
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
-//          GestureDetector(
-//              onTap: () {
+          GestureDetector(
+              onTap: () {
 //                addStringToSF(); //Implement send functionality.
-//              },
-//              child: Center(
-//                  child: Padding(
-//                padding: const EdgeInsets.only(right: 8.0),
-//                child: Text(
-//                  'Logout',
-//                  style: TextStyle(
-//                      color: Colors.redAccent, fontWeight: FontWeight.w800),
-//                ),
-//              )))
+              },
+              child: ring
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 18.0),
+                        child: Icon(
+                          Icons.notifications_active,
+                          color: Colors.deepOrangeAccent,
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 18.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, notfiy_screen.id);
+                          },
+                          child: Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )),
+          GestureDetector(
+              onTap: () {
+//                addStringToSF(); //Implement send functionality.
+              },
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      getNotifications();
+                    },
+                    child: Icon(
+                      Icons.email,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ))
         ],
         leading: null,
         backgroundColor: Colors.amber,
@@ -189,5 +224,22 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
             ],
           );
         });
+  }
+
+  dart_mongo.Db db;
+
+  void getNotifications() async {
+    db = dart_mongo.Db(URL);
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {}
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email');
+    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    List val = await usersCollection
+        .find(dart_mongo.where.eq("emailT", email))
+        .toList();
+    Navigator.pushNamed(context, msg_lists.id);
   }
 }

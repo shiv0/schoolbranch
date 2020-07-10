@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
@@ -8,13 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen_bh.dart';
 import 'home_T_screen.dart';
 
-class Registration_Otp extends StatefulWidget {
-  static String id = 'registration_otp';
+class Chat_Screen_all extends StatefulWidget {
+  static String id = 'chat_screen_all';
   @override
-  _Registration_OtpState createState() => _Registration_OtpState();
+  _Chat_Screen_allState createState() => _Chat_Screen_allState();
 }
 
-class _Registration_OtpState extends State<Registration_Otp> {
+class _Chat_Screen_allState extends State<Chat_Screen_all> {
   ProgressDialog pr;
   String first_name,
       last_name,
@@ -31,23 +29,6 @@ class _Registration_OtpState extends State<Registration_Otp> {
       qualification;
   @override
   Widget build(BuildContext context) {
-    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-    if (arguments != null) {
-      first_name = arguments['name'];
-      last_name = arguments['lname'];
-      email_id = arguments['email'];
-      mobile = arguments['mobile'];
-      category = arguments['category'];
-      pass = arguments['password'];
-      qualification = arguments['qualification'];
-      address = arguments['address'];
-      district = arguments['district'];
-      state = arguments['state'];
-      pin = arguments['pin'];
-      otp = arguments['otp'];
-    }
-    pr = new ProgressDialog(context);
-    pr.style(message: 'Please Wait..');
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: "Welcome to Flutter",
@@ -74,7 +55,7 @@ class _Registration_OtpState extends State<Registration_Otp> {
                       onChanged: (value) {
                         input_otp = value; //Do something with the user input.
                       },
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: 'Enter OTP',
@@ -108,7 +89,7 @@ class _Registration_OtpState extends State<Registration_Otp> {
                         child: MaterialButton(
                           onPressed: () {
                             if (input_otp != null)
-                              checkOTP();
+                              insertMsg();
                             else
                               dialog_show('Invalid Input',
                                   'You have not entered correctly.'); //Implement login functionality.
@@ -123,61 +104,50 @@ class _Registration_OtpState extends State<Registration_Otp> {
                     ),
                   ])),
                 ))));
+    ;
   }
 
-  void checkOTP() async {
-    if (input_otp != otp) {
-      await pr.show();
-      dart_mongo.Db db = dart_mongo.Db(URL);
-      try {
-        await db.open().timeout(const Duration(seconds: 15));
-      } on Exception catch (_) {
-        pr.hide().then((isHidden) {
-          dialog_show('Error', 'Some error in connecting database!');
-        });
-      }
-      print('database connected');
-      dart_mongo.DbCollection usersCollection = db.collection(user_coll);
-      List val = await usersCollection
-          .find(dart_mongo.where.eq("email", email_id))
-          .toList();
-      if (val.length == 0) {
-        List val2 = await usersCollection
-            .find(dart_mongo.where.eq("mobile", mobile))
-            .toList();
-        if (val2.length == 0) {
-          await usersCollection.insertAll([
-            {
-              'name': first_name,
-              'lname': last_name,
-              'email': email_id,
-              'mobile': mobile,
-              'password': pass,
-              'qualification': qualification,
-              'address': address,
-              'district': district,
-              'state': state,
-              'pin': pin,
-              'category': category
-            },
-          ]);
-          print('database inserted');
-          await db.close();
-          pr.hide().then((isHidden) {
-            addStringToSF();
-          });
-        } else {
-          await db.close();
-          pr.hide();
-          dialog_show('Already User', 'Mobile already exist.Try login');
-        }
-      } else {
-        await db.close();
-        pr.hide();
-        dialog_show('Already User', 'Email already exist.Try login');
-      }
-    } else
-      dialog_show('Incorrect OTP', 'The OTP you entered is not correct.!');
+  void insertMsg() async {
+    await pr.show();
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    try {
+      await db.open().timeout(const Duration(seconds: 15));
+    } on Exception catch (_) {
+      pr.hide().then((isHidden) {
+        dialog_show('Error', 'Some error in connecting database!');
+      });
+    }
+    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('Text');
+//    List val = await usersCollection
+//        .find(dart_mongo.where.eq("email", email_id))
+//        .toList();
+//    if (val.length == 0) {
+//      List val2 = await usersCollection
+//          .find(dart_mongo.where.eq("mobile", mobile))
+//          .toList();
+//      if (val2.length == 0) {
+    await usersCollection.insertAll([
+      {
+        'emailT': first_name,
+        'emailBr': last_name,
+        'status': email_id,
+        'msg': mobile,
+      },
+    ]);
+    print('database inserted');
+    await db.close();
+    pr.hide().then((isHidden) {});
+//      } else {
+//        await db.close();
+//        pr.hide();
+//        dialog_show('Already User', 'Mobile already exist.Try login');
+//      }
+//    } else {
+//      await db.close();
+//      pr.hide();
+//      dialog_show('Already User', 'Email already exist.Try login');
+//    }
   }
 
   void dialog_show(String s, String t) {
@@ -215,18 +185,5 @@ class _Registration_OtpState extends State<Registration_Otp> {
             ],
           );
         });
-  }
-
-  addStringToSF() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('loginsts', "1yes");
-    prefs.setString('Cat', category);
-    prefs.setString('email', email_id);
-    if (category == '1')
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Home_screen.id, (Route<dynamic> route) => false);
-    else if (category == '2')
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          HomeScreenBh.id, (Route<dynamic> route) => false);
   }
 }
