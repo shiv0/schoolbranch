@@ -118,7 +118,7 @@ class _Chat_Screen_allState extends State<Chat_Screen_all> {
       });
     }
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
 //    List val = await usersCollection
 //        .find(dart_mongo.where.eq("email", email_id))
 //        .toList();

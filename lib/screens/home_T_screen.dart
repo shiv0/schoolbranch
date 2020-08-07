@@ -236,7 +236,7 @@ class _Home_screenState extends State<Home_screen> with WidgetsBindingObserver {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     List val = await usersCollection
         .find(dart_mongo.where.eq("emailT", email))
         .toList();

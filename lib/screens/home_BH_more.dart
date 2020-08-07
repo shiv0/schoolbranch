@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/constants.dart';
 import 'package:sk_school/screens/Edit_BH_profile.dart';
 import 'package:sk_school/screens/home_BH_profile.dart';
+import 'package:sk_school/screens/payment.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
 
 class Home_BH_More extends StatefulWidget {
@@ -18,7 +19,7 @@ class _Home_BH_MoreState extends State<Home_BH_More> {
       body: Column(
         children: <Widget>[
           SizedBox(
-            height: 25.0,
+            height: 15.0,
           ),
           Container(
             child: Text(
@@ -30,7 +31,7 @@ class _Home_BH_MoreState extends State<Home_BH_More> {
             ),
           ),
           SizedBox(
-            height: 45.0,
+            height: 15.0,
           ),
           Card(
               color: Colors.white,
@@ -106,12 +107,37 @@ class _Home_BH_MoreState extends State<Home_BH_More> {
                 )),
           ),
           SizedBox(
-            height: 25.0,
+            height: 0.0,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Payment.id);
+            },
+            child: Card(
+                color: Colors.white,
+                elevation: 8,
+                margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.payment,
+                    color: Colors.orange,
+                  ),
+                  title: Text(
+                    'Make a Payment',
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontFamily: 'SourceSansPro',
+                        fontSize: 20.0),
+                  ),
+                )),
+          ),
+          SizedBox(
+            height: 1.0,
           ),
           Container(
             child: Card(
                 color: Colors.red.shade500,
-                margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                 child: InkWell(
                   onTap: () {
                     addStringToSF();

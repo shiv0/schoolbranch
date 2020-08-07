@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart' as dart_mongo;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/constants.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:sk_school/screens/chat_screen_teachers.dart';
@@ -19,6 +20,7 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
       description = "",
       name = "",
       lname = "",
+      lname2 = "",
       mobile = "",
       qualification = "",
       address = "",
@@ -235,7 +237,7 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
                                     Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Text(
-                                        lname,
+                                        lname2,
                                         style: TextStyle(
                                             color: Colors.black87,
                                             fontFamily: 'SourceSansPro',
@@ -270,7 +272,7 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
                                     Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Text(
-                                        email,
+                                        pemail,
                                         style: TextStyle(
                                             color: Colors.black87,
                                             fontFamily: 'SourceSansPro',
@@ -747,7 +749,7 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
 
       setState(() {
         name = val[0]['name'];
-        lname = val[0]['lname'];
+        lname2 = val[0]['lname'];
         mobile = val[0]['mobile'];
         qualification = val[0]['qualification'];
         address = val[0]['address'];
@@ -759,7 +761,7 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
         date = pdate;
         amount = pamount;
         description = pdescription;
-        email = pemail;
+//        email = pemail;
         status = pstatus;
         display = true;
         print(name);
@@ -776,9 +778,11 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
   dart_mongo.Db db;
 
   void updatestatus(String s) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = prefs.getString('email');
     db = dart_mongo.Db(URL);
     await db.open();
-    print('database connected');
+    print('database hello');
     await getuserdata();
     dart_mongo.DbCollection usersCollection = db.collection('BHCards');
     await usersCollection.update(
@@ -786,8 +790,8 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
           .eq("email", pemail)
           .and(dart_mongo.where.eq("amount", amount))),
       {
-        'email': email,
-        'name': user_name,
+        'email': pemail,
+        'name': name + ' ' + lname2,
         'subject': subject,
         'gender': gender,
         'duration': duration,
@@ -799,13 +803,13 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
         'status': s,
       },
     );
-    print('database inserted');
+    print('database $pemail$email');
     String ismessage = s == 'Messaged' ? '1' : '0';
     if (ismessage == '1') {
       Navigator.pushNamed(context, chat_screen_teachers.id,
-          arguments: {'email': email, 'name': user_name});
+          arguments: {'email': pemail, 'name': user_name});
     } else {
-      dart_mongo.DbCollection usersCollection = db.collection('Text');
+      dart_mongo.DbCollection usersCollection = db.collection('Text2');
 //    List val = await usersCollection
 //        .find(dart_mongo.where.eq("email", email_id))
 //        .toList();
@@ -816,16 +820,19 @@ class _Card_Details_BH_TState extends State<Card_Details_BH_T> {
 //      if (val2.length == 0) {
       await usersCollection.insertAll([
         {
-          'emailT': pemail,
-          'emailBr': email,
+          'emailT': email, //pemail-branchhead,email-teachers
+          'emailBr': pemail,
           'status': 'SBN',
           'msg': 'You are ' + s + ' by ' + user_name,
           'Bname': name,
           'Tname': user_name,
           'Rstatus': '1',
+          'from': email,
+          'event': s,
         },
       ]);
       print('database inserted');
+//      dialog_show(s, 'You ' + s + ' ' + name);
       await db.close();
       pr.hide().then((isHidden) {
         Navigator.of(context).pop();

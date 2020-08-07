@@ -100,7 +100,7 @@ class _HomeBhFrontState extends State<HomeBhFront> {
     List val = await usersCollection
         .find(dart_mongo.where.eq("email", email))
         .toList();
-//    print('huh$val');
+    print('huh$val');
     List<Choice> list = [];
     for (int i = val.length - 1; i >= 0; i--) {
       String duration = val[i]['duration'];

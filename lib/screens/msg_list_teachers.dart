@@ -168,7 +168,7 @@ class _msg_listsState extends State<msg_lists> {
     dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     List val = await usersCollection
         .find(dart_mongo.where.eq("emailT", email))
         .toList();

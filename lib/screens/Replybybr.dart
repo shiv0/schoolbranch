@@ -24,7 +24,7 @@ class ReplybybrState extends State<Replybybr> {
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     if (arguments != null) {
       email_br = arguments['email'];
-      name_br = arguments['name'];
+      msg = arguments['msg'];
       name_T = arguments['Tname'];
       status = arguments['status'];
       Bname = arguments['Bname'];
@@ -115,7 +115,7 @@ class ReplybybrState extends State<Replybybr> {
     await db.open();
     print('database connected');
     await getuserdata();
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     await usersCollection.update(
       await usersCollection.findOne(dart_mongo.where
           .eq("emailT", email_teachers)

@@ -834,13 +834,13 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
         'status': s
       },
     );
-    print('database inserted');
+    print('database $email$email2');
     String ismessage = s == 'Messaged' ? '1' : '0';
     if (ismessage == '1') {
       Navigator.pushNamed(context, chat_screen_br.id,
           arguments: {'email': email});
     } else {
-      dart_mongo.DbCollection usersCollection = db.collection('Text');
+      dart_mongo.DbCollection usersCollection = db.collection('Text2');
 //    List val = await usersCollection
 //        .find(dart_mongo.where.eq("email", email_id))
 //        .toList();
@@ -858,9 +858,12 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
           'Bname': user_name2,
           'Tname': user_name,
           'Rstatus': '1',
+          'from': email2,
+          'event': s,
         },
       ]);
       print('database inserted');
+//      dialog_show(s, 'You ' + s + ' ' + user_name);
       await db.close();
       pr.hide().then((isHidden) {
         Navigator.of(context).pop();

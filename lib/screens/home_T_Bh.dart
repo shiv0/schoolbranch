@@ -638,27 +638,6 @@ class CardItem extends StatelessWidget {
                   child: Row(
                     children: <Widget>[
                       Icon(
-                        Icons.attach_money,
-                        color: Colors.deepOrangeAccent,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          choice.amount,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontFamily: 'SourceSansPro',
-                              fontSize: 15.0),
-                        ),
-                      ),
-                    ],
-                  ),
-                  alignment: Alignment.topLeft,
-                ),
-                Container(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
                         Icons.perm_identity,
                         color: Colors.brown,
                       ),
@@ -679,6 +658,28 @@ class CardItem extends StatelessWidget {
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Icon(
+                        Icons.attach_money,
+                        color: Colors.deepOrangeAccent,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Text(
+                          choice.amount,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.topRight,
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(right: 4.0),

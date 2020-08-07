@@ -60,14 +60,15 @@ class notify_screen_brState extends State<notify_screen_br> {
 //                            'subject': card_list[index].subject
 //                          });
                             if (card_list[index].status != 'SBN') {
-                              Navigator.pushNamed(context, Replybybr.id,
-                                  arguments: {
-                                    'msg': card_list[index].msg,
-                                    'emailBr': card_list[index].emailBr,
-                                    'status': card_list[index].status,
-                                    'Tname': card_list[index].Tname,
-                                    'Bname': card_list[index].Bname,
-                                  });
+                              if (card_list[index].event == 'Invited')
+                                Navigator.pushNamed(context, Replybybr.id,
+                                    arguments: {
+                                      'msg': card_list[index].msg,
+                                      'emailBr': card_list[index].emailBr,
+                                      'status': card_list[index].status,
+                                      'Tname': card_list[index].Tname,
+                                      'Bname': card_list[index].Bname,
+                                    });
                             }
                           },
                           child: CardItem(
@@ -96,11 +97,11 @@ class notify_screen_brState extends State<notify_screen_br> {
     dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     List val = await usersCollection
-        .find(dart_mongo.where.eq("emailT", email))
+        .find(dart_mongo.where.eq("emailBr", email))
         .toList();
-    print('huh$val');
+    print('htooo$val');
     List<Choice> list = [];
     for (int i = val.length - 1; i >= 0; i--) {
       String emailBr = val[i]['emailBr'];
@@ -109,20 +110,26 @@ class notify_screen_brState extends State<notify_screen_br> {
       String Bname = val[i]['Bname'];
       String Tname = val[i]['Tname'];
       String Rstatus = val[i]['Rstatus'];
+      String from = val[i]['from'];
+      String event = val[i]['event'];
       if (status == null) {
         status = '20-12-02';
       }
       if (Bname == null) {
         Bname = 'how';
       }
+      print('htooo$from');
 
+//      if (from != email) {
       Choice choices = Choice(
           emailBr: emailBr,
           status: status,
           msg: msg,
           Bname: Bname,
+          event: event,
           Tname: Tname);
       if (Rstatus == '1') list.add(choices);
+//      }
     }
     setState(() {
       card_list = list;
@@ -141,12 +148,14 @@ class Choice {
   final String msg;
   final String Bname;
   final String Tname;
+  final String event;
 
   const Choice({
     this.emailBr,
     this.status,
     this.msg,
     this.Bname,
+    this.event,
     this.Tname,
   });
 }

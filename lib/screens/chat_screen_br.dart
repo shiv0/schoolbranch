@@ -117,7 +117,7 @@ class _chat_screen_brState extends State<chat_screen_br> {
       });
     }
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
 //    List val = await usersCollection
 //        .find(dart_mongo.where.eq("email", email_id))
 //        .toList();
@@ -135,9 +135,11 @@ class _chat_screen_brState extends State<chat_screen_br> {
         'Bname': user_name,
         'Tname': name_T,
         'Rstatus': '1',
+        'from': email_br,
+        'event': 'Messaged',
       },
     ]);
-    print('database inserted');
+    print('msgdatabase inserted');
     await db.close();
     pr.hide().then((isHidden) {
       Navigator.of(context).pop();

@@ -8,6 +8,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:sk_school/screens/card_details_T.dart';
 import 'package:sk_school/screens/msg_received_br.dart';
 
+import 'Replybybr.dart';
+
 class msg_list_br extends StatefulWidget {
   static String id = 'msg_list_br';
   @override
@@ -125,20 +127,7 @@ class msg_list_brState extends State<msg_list_br> {
                       physics: const NeverScrollableScrollPhysics(),
                       children: List.generate(card_list.length, (index) {
                         return GestureDetector(
-                          onTap: () {
-//                      Scaffold.of(context).showSnackBar(SnackBar(
-//                        content: Text('$index'),
-//                        emailBr: emailBr(seconds: 2),
-//                      ));
-//                      Navigator.pushNamed(context, Card_Details_T.id,
-//                          arguments: {
-//                            'status': card_list[index].status,
-//                            'emailBr': card_list[index].emailBr,
-//                            'msg': card_list[index].msg,
-//                            'description': card_list[index].description,
-//                            'subject': card_list[index].subject
-//                          });
-                          },
+                          onTap: () {},
                           child: CardItem(
                             choice: card_list[index],
                             item: card_list[index],
@@ -168,7 +157,7 @@ class msg_list_brState extends State<msg_list_br> {
     dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     List val = await usersCollection
         .find(dart_mongo.where.eq("emailBr", email))
         .toList();
@@ -179,6 +168,7 @@ class msg_list_brState extends State<msg_list_br> {
       String status = val[i]['status'];
       String msg = val[i]['msg'];
       String Tname = val[i]['Tname'];
+      String Bname = val[i]['Bname'];
       String Reply = val[i]['Reply'];
       if (status == null) {
         status = '20-12-02';
@@ -188,6 +178,10 @@ class msg_list_brState extends State<msg_list_br> {
       }
       if (Reply == null) {
         Reply = 'how';
+      }
+
+      if (msg == null) {
+        msg = 'how';
       }
 
       Choice choices = Choice(
@@ -215,6 +209,7 @@ class Choice {
   final String msg;
   final String Tname;
   final String Reply;
+  final String Bname;
 
   const Choice({
     this.emailBr,
@@ -222,6 +217,7 @@ class Choice {
     this.msg,
     this.Tname,
     this.Reply,
+    this.Bname,
   });
 }
 

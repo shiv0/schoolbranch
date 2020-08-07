@@ -59,14 +59,15 @@ class notfiy_screenState extends State<notfiy_screen> {
 //                            'subject': card_list[index].subject
 //                          });
                             if (card_list[index].status != 'SBN') {
-                              Navigator.pushNamed(context, Replybyteacher.id,
-                                  arguments: {
-                                    'msg': card_list[index].msg,
-                                    'emailBr': card_list[index].emailBr,
-                                    'status': card_list[index].status,
-                                    'Tname': card_list[index].Tname,
-                                    'Bname': card_list[index].Bname,
-                                  });
+                              if (card_list[index].event == 'Invited')
+                                Navigator.pushNamed(context, Replybyteacher.id,
+                                    arguments: {
+                                      'msg': card_list[index].msg,
+                                      'emailBr': card_list[index].emailBr,
+                                      'status': card_list[index].status,
+                                      'Tname': card_list[index].Tname,
+                                      'Bname': card_list[index].Bname,
+                                    });
                             }
                           },
                           child: CardItem(
@@ -95,7 +96,7 @@ class notfiy_screenState extends State<notfiy_screen> {
     dart_mongo.Db db = dart_mongo.Db(URL);
     await db.open();
     print('database connected');
-    dart_mongo.DbCollection usersCollection = db.collection('Text');
+    dart_mongo.DbCollection usersCollection = db.collection('Text2');
     List val = await usersCollection
         .find(dart_mongo.where.eq("emailT", email))
         .toList();
@@ -108,21 +109,28 @@ class notfiy_screenState extends State<notfiy_screen> {
       String Bname = val[i]['Bname'];
       String Tname = val[i]['Tname'];
       String Rstatus = val[i]['Rstatus'];
+      String event = val[i]['event'];
+      String from = val[i]['from'];
       if (status == null) {
         status = '20-12-02';
       }
       if (Bname == null) {
         Bname = 'how';
       }
-
-      Choice choices = Choice(
-          emailBr: emailBr,
-          status: status,
-          Rstatus: Rstatus,
-          msg: msg,
-          Bname: Bname,
-          Tname: Tname);
-      if (Rstatus == '1') list.add(choices);
+      if (from == null) {
+        Bname = 'how';
+      }
+      if (from != email) {
+        Choice choices = Choice(
+            emailBr: emailBr,
+            status: status,
+            Rstatus: Rstatus,
+            msg: msg,
+            Bname: Bname,
+            event: event,
+            Tname: Tname);
+        if (Rstatus == '1') list.add(choices);
+      }
     }
     setState(() {
       card_list = list;
@@ -142,6 +150,7 @@ class Choice {
   final String Bname;
   final String Tname;
   final String Rstatus;
+  final String event;
 
   const Choice({
     this.emailBr,
@@ -150,6 +159,7 @@ class Choice {
     this.Bname,
     this.Tname,
     this.Rstatus,
+    this.event,
   });
 }
 

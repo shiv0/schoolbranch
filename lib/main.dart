@@ -21,6 +21,7 @@ import 'package:sk_school/screens/msg_list_br.dart';
 import 'package:sk_school/screens/msg_list_teachers.dart';
 import 'package:sk_school/screens/msg_received_br.dart';
 import 'package:sk_school/screens/msg_received_teacher.dart';
+import 'package:sk_school/screens/payment.dart';
 import 'package:sk_school/screens/registration_otp.dart';
 import 'package:sk_school/screens/sign_up.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
@@ -69,6 +70,7 @@ class FlashChat extends StatelessWidget {
         Edit_BH_Profile.id: (context) => Edit_BH_Profile(),
         Home_BH_Profile.id: (context) => Home_BH_Profile(),
         Card_Details_BH_T.id: (context) => Card_Details_BH_T(),
+        Payment.id: (context) => Payment(),
       },
     );
   }

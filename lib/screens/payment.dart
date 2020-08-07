@@ -6,13 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen_bh.dart';
 import 'home_T_screen.dart';
 
-class Replybyteacher extends StatefulWidget {
-  static String id = 'Replybyteacher';
+class Payment extends StatefulWidget {
+  static String id = 'Payment';
   @override
-  ReplybyteacherState createState() => ReplybyteacherState();
+  PaymentState createState() => PaymentState();
 }
 
-class ReplybyteacherState extends State<Replybyteacher> {
+class PaymentState extends State<Payment> {
   String input_otp;
   ProgressDialog pr;
   String email_teachers, email_br, name_br, msg, status, name_T, Bname;
@@ -23,8 +23,8 @@ class ReplybyteacherState extends State<Replybyteacher> {
     pr.style(message: 'Please Wait..');
     final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     if (arguments != null) {
-      email_br = arguments['emailBr'];
-      msg = arguments['msg'];
+      email_br = arguments['email'];
+      name_br = arguments['name'];
       name_T = arguments['Tname'];
       status = arguments['status'];
       Bname = arguments['Bname'];
@@ -58,7 +58,7 @@ class ReplybyteacherState extends State<Replybyteacher> {
                       },
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        hintText: 'Enter MSG',
+                        hintText: 'Enter Amount',
                         hintStyle: TextStyle(color: Colors.white),
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),
@@ -87,13 +87,7 @@ class ReplybyteacherState extends State<Replybyteacher> {
                         borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         elevation: 5.0,
                         child: MaterialButton(
-                          onPressed: () {
-                            if (input_otp != null)
-                              insertMsg();
-                            else
-                              dialog_show('Invalid Input',
-                                  'You have not entered correctly.'); //Implement login functionality.
-                          },
+                          onPressed: () {},
                           minWidth: 200.0,
                           height: 42.0,
                           child: Text(
@@ -126,7 +120,7 @@ class ReplybyteacherState extends State<Replybyteacher> {
         'emailBr': email_br,
         'status': status,
         'msg': msg,
-        'Bname': Bname,
+        'Bname': name_br,
         'Tname': name_T,
         'Rstatus': '0',
         'Reply': input_otp,

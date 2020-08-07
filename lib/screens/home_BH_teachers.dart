@@ -81,6 +81,7 @@ class _HomeBhTeachersState extends State<HomeBhTeachers> {
       String amount = val[i]['amount'];
       String subject = val[i]['subject'];
       String description = val[i]['description'];
+      String posted_date = val[i]['posted_date'];
       String name = val[i]['name'];
       String lname = val[i]['lname'];
       String email = val[i]['email'];
@@ -98,6 +99,9 @@ class _HomeBhTeachersState extends State<HomeBhTeachers> {
       if (date == null) {
         date = '20-12-02';
       }
+      if (posted_date == null) {
+        posted_date = '20-12-02';
+      }
       Choice choices = Choice(
           duration: duration,
           date: date,
@@ -107,6 +111,7 @@ class _HomeBhTeachersState extends State<HomeBhTeachers> {
           subject: subject,
           status: status,
           state: state,
+          posted_date: posted_date,
           description: description);
       list.add(choices);
     }
@@ -131,6 +136,7 @@ class Choice {
   final String status;
   final String email;
   final String state;
+  final String posted_date;
 
   const Choice(
       {this.duration,
@@ -140,6 +146,7 @@ class Choice {
       this.name,
       this.email,
       this.status,
+      this.posted_date,
       this.subject,
       this.description});
 }
@@ -267,6 +274,21 @@ class CardItem extends StatelessWidget {
                         child: Text(
                           '\$' + choice.amount,
                           style: TextStyle(color: Colors.brown, fontSize: 20.0),
+                        ),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.topRight,
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Text(
+                          choice.posted_date,
+                          style: TextStyle(color: Colors.brown, fontSize: 15.0),
                         ),
                       ),
                     ],
