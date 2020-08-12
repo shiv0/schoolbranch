@@ -5,6 +5,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/screens/chat_screen_br.dart';
 import 'package:sk_school/screens/chat_screen_teachers.dart';
+import 'package:sk_school/screens/payment.dart';
 
 class Card_Details_T_BH extends StatefulWidget {
   static String id = 'card_details_T_bh';
@@ -709,6 +710,32 @@ class _Card_Details_T_BHState extends State<Card_Details_T_BH> {
                             ],
                           ),
                         )),
+                    SizedBox(
+                      height: 0.0,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, Payment.id);
+                      },
+                      child: Card(
+                          color: Colors.white,
+                          elevation: 8,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 5.0, horizontal: 10.0),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.payment,
+                              color: Colors.orange,
+                            ),
+                            title: Text(
+                              'Make a Payment',
+                              style: TextStyle(
+                                  color: Colors.black87,
+                                  fontFamily: 'SourceSansPro',
+                                  fontSize: 20.0),
+                            ),
+                          )),
+                    ),
                     SizedBox(
                       height: 35,
                     )

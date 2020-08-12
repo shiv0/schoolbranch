@@ -107,31 +107,6 @@ class _Home_BH_MoreState extends State<Home_BH_More> {
                 )),
           ),
           SizedBox(
-            height: 0.0,
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, Payment.id);
-            },
-            child: Card(
-                color: Colors.white,
-                elevation: 8,
-                margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-                child: ListTile(
-                  leading: Icon(
-                    Icons.payment,
-                    color: Colors.orange,
-                  ),
-                  title: Text(
-                    'Make a Payment',
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontFamily: 'SourceSansPro',
-                        fontSize: 20.0),
-                  ),
-                )),
-          ),
-          SizedBox(
             height: 1.0,
           ),
           Container(
