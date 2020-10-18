@@ -29,8 +29,9 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
       mobile,
       subject_label = 'Select Subjects',
       gender_label = 'Select Gender';
-  List<String> subject_list = ['Physics.', 'Chemistry.'];
+  List<String> subject_list = [];
   List<String> gender_list = ['Male', 'Female'];
+
   final _formKey = GlobalKey<FormState>();
 
   String user_name, lname;
@@ -41,6 +42,13 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
   bool _autoValidate = false;
 
   ProgressDialog pr;
+  @override
+  void initState() {
+    getUserCards();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
@@ -269,6 +277,30 @@ class _Add_Form_BHState extends State<Add_Form_BH> {
                 ),
               ),
             ])));
+  }
+
+  void getUserCards() async {
+//    Future.delayed(Duration.zero, () {
+//      pr.show();
+//    });
+
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    await db.open();
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('subjects');
+    List val = await usersCollection.find().toList();
+    print('huh$val');
+    for (int i = val.length - 1; i >= 0; i--) {
+      String name = val[i]['name'];
+      subject_list.add(name);
+    }
+    setState(() {});
+//    print('database connected');
+
+    await db.close();
+//    pr.hide().then((isHidden) {
+//      print(isHidden);
+//    });
   }
 
   Future<Null> _selectDate(BuildContext context) async {

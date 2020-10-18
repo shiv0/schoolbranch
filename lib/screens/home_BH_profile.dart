@@ -24,10 +24,7 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
       ppin = '',
       description,
       pdescription = '';
-  List<String> state1 = ['STATEab', 'STATEcd'],
-      district1 = ['district11', 'district22'],
-      district2 = ['district33', 'district44'],
-      districtlist = [];
+  List<String> state1 = [], district1 = [], district2 = [], districtlist = [];
   final _formKey = GlobalKey<FormState>();
   ProgressDialog pr;
 
@@ -42,6 +39,7 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
     // TODO: implement initState
     super.initState();
     getUserDetails();
+    getUserCards();
   }
 
   @override
@@ -156,12 +154,12 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
                                     onChanged: (value) {
                                       setState(() {
                                         state = value;
-                                        print(state);
-                                        if (value == 'STATEab')
-                                          districtlist = district1;
-                                        else
-                                          districtlist = district2;
-                                        district = null;
+//                                        print(state);
+//                                        if (value == 'STATEab')
+//                                          districtlist = district1;
+//                                        else
+//                                          districtlist = district2;
+//                                        district = null;
                                       });
                                     },
                                     value: state,
@@ -177,7 +175,7 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
                                 height: 20.0,
                               ),
                               Text(
-                                'District',
+                                'City',
                                 style: TextStyle(
                                     fontSize: 15.0, color: Colors.black87),
                               ),
@@ -208,7 +206,7 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
                                     isExpanded: true,
                                     hint: Padding(
                                       padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text("Select District",
+                                      child: Text("Select City",
                                           style: TextStyle(
                                             color: Colors.black87,
                                           )),
@@ -427,6 +425,56 @@ class _Home_BH_ProfileState extends State<Home_BH_Profile> {
             ],
           );
         });
+  }
+
+  List<String> list2, list_state_city, list_qualification = [];
+
+  void getUserCards() async {
+//    Future.delayed(Duration.zero, () {
+//      pr.show();
+//    });
+
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    await db.open();
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('state');
+    List val = await usersCollection.find().toList();
+    print('huh$val');
+    List<String> list = [];
+    for (int i = val.length - 1; i >= 0; i--) {
+      String name = val[i]['sname'];
+      list.add(name);
+    }
+    setState(() {
+      if (!list.isEmpty) state1 = list;
+    });
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection2 = db.collection('city');
+    List val2 = await usersCollection2.find().toList();
+    print('huh$val2');
+    list2 = [];
+    list_state_city = [];
+    for (int i = val2.length - 1; i >= 0; i--) {
+      String stategot = val2[i]['state'];
+      String city = val2[i]['cname'];
+      list2.add(city);
+      list_state_city.add(stategot);
+    }
+    setState(() {
+      if (!list2.isEmpty) districtlist = list2;
+    });
+    dart_mongo.DbCollection usersCollection3 = db.collection('qualification');
+    List val3 = await usersCollection3.find().toList();
+    print('huh$val3');
+    for (int i = val3.length - 1; i >= 0; i--) {
+      String qname = val3[i]['qname'];
+      list_qualification.add(qname);
+    }
+    setState(() {});
+    await db.close();
+//    pr.hide().then((isHidden) {
+//      print(isHidden);
+//    });
   }
 
   void submit() async {

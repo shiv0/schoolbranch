@@ -35,13 +35,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   List<String> state1 = ['STATEab', 'STATEcd'],
       district1 = ['district11', 'district22'],
       district2 = ['district33', 'district44'],
-      districtlist = [];
+      districtlist = [],
+      list_qualification = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserCards();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
     pr.style(message: 'Please Wait..');
-
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         body: Stack(children: [
@@ -266,8 +273,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               color: Colors.white,
                             )),
                       ),
-                      items: <String>['Graduate', 'Post Graduate']
-                          .map((String value) {
+                      items: list_qualification.map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,
                           child: Padding(
@@ -347,11 +353,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         setState(() {
                           FocusScope.of(context).requestFocus(new FocusNode());
                           state = value;
-                          print(state);
-                          if (value == 'STATEab')
-                            districtlist = district1;
-                          else
-                            districtlist = district2;
+//                          for (int i = 0; i < list2.length; i++) {
+//                            print('jek' + list_state_city[i]);
+//
+//                            if (list_state_city[i] == state) {
+//                              String va = list2[i];
+//                              districtlist.add(va);
+//                            }
+//                          }
+                          print('jek' + districtlist[0]);
+
+//                          if (value == 'STATEab')
+//                            districtlist = district1;
+//                          else
+//                            districtlist = district2;
                           district = null;
                         });
                       },
@@ -376,7 +391,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       isExpanded: true,
                       hint: Padding(
                         padding: const EdgeInsets.only(left: 15.0),
-                        child: Text("Select District",
+                        child: Text("Select City",
                             style: TextStyle(
                               color: Colors.white,
                             )),
@@ -680,6 +695,55 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 //      pr.hide();
 //      dialog_show('Already User', 'Email already exist.Try login');
 //    }
+  }
+
+  List<String> list2, list_state_city;
+  void getUserCards() async {
+//    Future.delayed(Duration.zero, () {
+//      pr.show();
+//    });
+
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    await db.open();
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('state');
+    List val = await usersCollection.find().toList();
+    print('huh$val');
+    List<String> list = [];
+    for (int i = val.length - 1; i >= 0; i--) {
+      String name = val[i]['sname'];
+      list.add(name);
+    }
+    setState(() {
+      if (!list.isEmpty) state1 = list;
+    });
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection2 = db.collection('city');
+    List val2 = await usersCollection2.find().toList();
+    print('huh$val2');
+    list2 = [];
+    list_state_city = [];
+    for (int i = val2.length - 1; i >= 0; i--) {
+      String stategot = val2[i]['state'];
+      String city = val2[i]['cname'];
+      list2.add(city);
+      list_state_city.add(stategot);
+    }
+    setState(() {
+      if (!list2.isEmpty) districtlist = list2;
+    });
+    dart_mongo.DbCollection usersCollection3 = db.collection('qualification');
+    List val3 = await usersCollection3.find().toList();
+    print('huh$val3');
+    for (int i = val3.length - 1; i >= 0; i--) {
+      String qname = val3[i]['qname'];
+      list_qualification.add(qname);
+    }
+    setState(() {});
+    await db.close();
+//    pr.hide().then((isHidden) {
+//      print(isHidden);
+//    });
   }
 
   addStringToSF() async {

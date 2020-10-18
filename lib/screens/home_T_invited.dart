@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sk_school/constants.dart';
+import 'package:sk_school/screens/home_BH_profile.dart';
 import 'package:sk_school/screens/welcome_screen.dart';
 
 class HomeTInvited extends StatefulWidget {
@@ -81,8 +82,30 @@ class _HomeTInvitedState extends State<HomeTInvited> {
                       fontSize: 20.0),
                 ),
               )),
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Home_BH_Profile.id);
+            },
+            child: Card(
+                color: Colors.white,
+                elevation: 8,
+                margin: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.person,
+                    color: Colors.orange,
+                  ),
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontFamily: 'SourceSansPro',
+                        fontSize: 20.0),
+                  ),
+                )),
+          ),
           SizedBox(
-            height: 25.0,
+            height: 1.0,
           ),
           Container(
             child: Card(

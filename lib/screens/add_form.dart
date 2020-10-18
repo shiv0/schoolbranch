@@ -35,6 +35,13 @@ class _AddFormState extends State<AddForm> {
   bool _autoValidate = false;
 
   ProgressDialog pr;
+  List<String> list_subject = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    getUserCards();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +93,7 @@ class _AddFormState extends State<AddForm> {
                               setState(() => subject = salutation),
                           validator: (value) =>
                               value == null ? 'Please select' : null,
-                          items: ['Physics.', 'Chemistry.']
+                          items: list_subject
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -317,6 +324,31 @@ class _AddFormState extends State<AddForm> {
 //    else
 //      submit();
 //  }
+  void getUserCards() async {
+//    Future.delayed(Duration.zero, () {
+//      pr.show();
+//    });
+
+    dart_mongo.Db db = dart_mongo.Db(URL);
+    await db.open();
+//    print('database connected');
+    dart_mongo.DbCollection usersCollection = db.collection('subjects');
+    List val = await usersCollection.find().toList();
+    print('huh$val');
+    List<String> list = [];
+    for (int i = val.length - 1; i >= 0; i--) {
+      String name = val[i]['name'];
+      list_subject.add(name);
+    }
+    setState(() {});
+//    print('database connected');
+
+    await db.close();
+//    pr.hide().then((isHidden) {
+//      print(isHidden);
+//    });
+  }
+
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
